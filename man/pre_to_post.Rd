@@ -37,15 +37,19 @@ postbreeding census MPM.
 S0 must be provided. In addition, provide either Amat alone (in which case the top row
 of Amat will be assumed to comprise fertility coefficients), Amat and Fmat, or Fmat and
 Umat.
+
+Currently, the only matrix structure supported is one in which only the first row of
+the matrix contains fertility coefficients. This is particularly suitable for
+non-spatial, one-sex or asexual models of animals (or plants without a seedbank).
 }
 \section{To do}{
 
-Account for multiple non-zero rows of Fmat
-
-Allow one newborn type to grow to multiple classes at age one
-
-Add argument testing
-
-Allow Amat to be an mpm object
+\itemize{
+  \item Account for multiple non-zero rows of Fmat
+  \item Allow one newborn type to grow to multiple classes at age one
+  \item Allow multiple newborn types
+  \item Add argument testing
+  \item Allow Amat to be an mpm object
+}
 }
 
