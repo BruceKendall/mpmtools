@@ -1,0 +1,16 @@
+Package: mpmtools
+Type: Package
+Title: Tools for Building and Analyzing Matrix Population Models
+Version: 0.0.0.9000
+Authors@R: person("Bruce", "Kendall", email = "kendall@bren.ucsb.edu",
+    role = c("aut", "cre"))
+Description: A collection of tools for building and analyzing matrix population models
+    (MPMs). An MPM represents the demography of an age-, stage-, or size-structured
+    population in one or more projection matrices. This package contains tools that
+    help ease the proces of constructing MPMs of varying degrees of complexity, and
+    provides functions for advanced model analysis. mpmtools is intended to help 
+    non-modelers more easily construct MPMs that reliably represent their data, and to
+    perform analyses that would otherwise require programming skills.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
