@@ -14,3 +14,4 @@ Description: A collection of tools for building and analyzing matrix population 
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
+RoxygenNote: 6.0.1
