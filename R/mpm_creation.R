@@ -8,7 +8,9 @@
 #' The final age class may be terminal (no further survival) or can be constructed with
 #' a self-loop for indefinite age classes having the same demography as the final one.
 #'
-#' If the model is terminal, then the survival of the last age class must be zero.
+#' If the survival of the final age class is non-zero, then a self-loop will be added that
+#' creates a final indefinite "stage". Note that if the final survival is zero and a
+#' postbreeding census model created, then the final column will be all zero. That's ok.
 #'
 #' @param x Either (1) a data frame containing columns named "x" (age, starting with age
 #'   zero), "sx" (containing one-timestep survival rates for each age) and "mx"
@@ -16,8 +18,6 @@
 #'   maximum age (in timesteps) for the model; or (3) a vector of ages.
 #' @param sx A vector of age-specific survival rates. Not needed if x is a data frame
 #' @param mx A vector of age-specific birth rates Not needed if x is a data frame
-#' @param last One of "repeating" (the last age class has a survival self-loop) or
-#'   "terminal" (there is no survival from the final age class)
 #' @param model The type of model. Currently supported options are "pre" (prebreeding
 #'   census model, the default) and "post" (postbreeding census model)
 #'
@@ -34,29 +34,23 @@
 #' make_Leslie_matrix(demog_sched)
 #'
 #' # Supply the vectors directly, and get a postbreeding census model
-#' with(demog_sched, make_Leslie_matrix(0:8, c(sx, 0), c(mx, 1), model = "post"))
+#' with(demog_sched, make_Leslie_matrix(0:7, sx, mx, model = "post"))
 #'
 #' # Supply x as an integer, and get a terminal model ("true" Leslie matrix)
-#' with(demog_sched, make_Leslie_matrix(7, sx, mx, last = "terminal"))
-make_Leslie_matrix <- function(x, sx = NULL, mx = NULL, last = c("repeating", "terminal"),
-                               model = c("pre", "post")) {
+#' with(demog_sched, make_Leslie_matrix(8, c(sx, 0), c(mx, 1)))
+make_Leslie_matrix <- function(x, sx = NULL, mx = NULL, model = c("pre", "post")) {
   if(is.data.frame(x)) {
     stopifnot(c("x", "sx", "mx") %in% names(x))
     sx <- x$sx
     mx <- x$mx
     x <- x$x
   }
-  if (last[1] == "terminal" & sx[length(sx)] != 0) {
-    stop("For a terminal model the final survival value must be zero")
-  }
   if (length(x) == 1) x <- 0:x
 
   # Make prebreeding census model
   n <- length(x) - 1
   A <- subdiag(n, sx[2:n])
-  if (last[1] == "repeating") {
-    A[n, n] <- sx[n + 1]
-  }
+  A[n, n] <- sx[n + 1]
   A[1, ] <- sx[1] * mx[-1]
 
   if (model[1] == "post") A <- suppressWarnings(pre_to_post(sx[1], A))

@@ -4,8 +4,7 @@
 \alias{make_Leslie_matrix}
 \title{Create a Leslie Matrix Model}
 \usage{
-make_Leslie_matrix(x, sx = NULL, mx = NULL, last = c("repeating",
-  "terminal"), model = c("pre", "post"))
+make_Leslie_matrix(x, sx = NULL, mx = NULL, model = c("pre", "post"))
 }
 \arguments{
 \item{x}{Either (1) a data frame containing columns named "x" (age, starting with age
@@ -16,9 +15,6 @@ maximum age (in timesteps) for the model; or (3) a vector of ages.}
 \item{sx}{A vector of age-specific survival rates. Not needed if x is a data frame}
 
 \item{mx}{A vector of age-specific birth rates Not needed if x is a data frame}
-
-\item{last}{One of "repeating" (the last age class has a survival self-loop) or
-"terminal" (there is no survival from the final age class)}
 
 \item{model}{The type of model. Currently supported options are "pre" (prebreeding
 census model, the default) and "post" (postbreeding census model)}
@@ -33,7 +29,9 @@ The final age class may be terminal (no further survival) or can be constructed 
 a self-loop for indefinite age classes having the same demography as the final one.
 }
 \details{
-If the model is terminal, then the survival of the last age class must be zero.
+If the survival of the final age class is non-zero, then a self-loop will be added that
+creates a final indefinite "stage". Note that if the final survival is zero and a
+postbreeding census model created, then the final column will be all zero. That's ok.
 }
 \examples{
 # Create a demography schedule, with juvenile and senescent age classes
@@ -45,8 +43,8 @@ demog_sched <- data.frame(x = 0:7,
 make_Leslie_matrix(demog_sched)
 
 # Supply the vectors directly, and get a postbreeding census model
-with(demog_sched, make_Leslie_matrix(0:8, c(sx, 0), c(mx, 1), model = "post"))
+with(demog_sched, make_Leslie_matrix(0:7, sx, mx, model = "post"))
 
 # Supply x as an integer, and get a terminal model ("true" Leslie matrix)
-with(demog_sched, make_Leslie_matrix(7, sx, mx, last = "terminal"))
+with(demog_sched, make_Leslie_matrix(8, c(sx, 0), c(mx, 1)))
 }
