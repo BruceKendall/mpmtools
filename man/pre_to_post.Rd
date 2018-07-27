@@ -22,7 +22,7 @@ survival/transition coefficients, and zeros elsewhere}
 }
 \value{
 A matrix containing the postbreeding census MPM that corresponds to Amat (or to
-  Fmat+Umat). Its rank will be one larger than that of Amat
+Fmat+Umat). Its rank will be one larger than that of Amat
 }
 \description{
 Prebreeding census MPMs and postbreeding census MPMs are functionally equivalent (they
@@ -45,11 +45,11 @@ non-spatial, one-sex or asexual models of animals (or plants without a seedbank)
 \section{To do}{
 
 \itemize{
-  \item Account for multiple non-zero rows of Fmat
-  \item Allow one newborn type to grow to multiple classes at age one
-  \item Allow multiple newborn types
-  \item Add argument testing
-  \item Allow Amat to be an mpm object
+\item Account for multiple non-zero rows of Fmat
+\item Allow one newborn type to grow to multiple classes at age one
+\item Allow multiple newborn types
+\item Add argument testing
+\item Allow Amat to be an mpm object
 }
 }
 

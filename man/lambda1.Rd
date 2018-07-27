@@ -10,8 +10,8 @@ lambda1(A)
 \item{A}{A square matrix}
 }
 \value{
-The dominant eigenvalue of `A`, which is the asymptotic growth rate of the
-  deterministic MPM represented by A.
+The dominant eigenvalue of \code{A}, which is the asymptotic growth rate of the
+deterministic MPM represented by A.
 }
 \description{
 Calculates lambda_1, the dominant eigenvalue of a matrix, which can be interpreted as

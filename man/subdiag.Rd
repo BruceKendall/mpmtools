@@ -11,12 +11,12 @@ subdiag(A, sx)
 matrix, or a square matrix}
 
 \item{sx}{Values to put on the subdiagonal. Either a scalar (which will be
-replicated as needed) or a vector with length one less than `A` or `nrow(A)` (as
+replicated as needed) or a vector with length one less than \code{A} or \code{nrow(A)} (as
 appropriate)}
 }
 \value{
 A matrix with specified subdiagonal or with the subdiagonal added to the
-  input matrix
+input matrix
 }
 \description{
 Create a square matrix with specified subdiagonal elements, or add specified elements
