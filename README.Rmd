@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 
 # mpmtools: Tools for Building and Analyzing Matrix Population Models 
 
-**mpmtools** provides A collection of tools for building and analyzing matrix population models
+**mpmtools** provides a collection of tools for building and analyzing matrix population models
     (MPMs). An MPM represents the demography of an age-, stage-, or size-structured
     population in one or more projection matrices. This package contains tools that
     help ease the proces of constructing MPMs of varying degrees of complexity, and
@@ -47,7 +47,7 @@ demog_sched <- data.frame(x = 0:7,
 A1 <- make_Leslie_matrix(demog_sched)
 A1
 
-# Calculated the asymptotic growth rate of the population governed by this demography
+# Calculate the asymptotic growth rate of the population governed by this demography
 #   schedule:
 lambda1(A1)
 ```

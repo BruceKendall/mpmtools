@@ -3,7 +3,7 @@
 mpmtools: Tools for Building and Analyzing Matrix Population Models
 ===================================================================
 
-**mpmtools** provides A collection of tools for building and analyzing matrix population models (MPMs). An MPM represents the demography of an age-, stage-, or size-structured population in one or more projection matrices. This package contains tools that help ease the proces of constructing MPMs of varying degrees of complexity, and provides functions for advanced model analysis. mpmtools is intended to help non-modelers more easily construct MPMs that reliably represent their data, and to perform analyses that would otherwise require programming skills.
+**mpmtools** provides a collection of tools for building and analyzing matrix population models (MPMs). An MPM represents the demography of an age-, stage-, or size-structured population in one or more projection matrices. This package contains tools that help ease the proces of constructing MPMs of varying degrees of complexity, and provides functions for advanced model analysis. mpmtools is intended to help non-modelers more easily construct MPMs that reliably represent their data, and to perform analyses that would otherwise require programming skills.
 
 Installation
 ------------
@@ -40,7 +40,7 @@ A1
 #> [6,]  0.0 0.00 0.000 0.00 0.90 0.00 0.000
 #> [7,]  0.0 0.00 0.000 0.00 0.00 0.75 0.400
 
-# Calculated the asymptotic growth rate of the population governed by this demography
+# Calculate the asymptotic growth rate of the population governed by this demography
 #   schedule:
 lambda1(A1)
 #> [1] 0.5535262
