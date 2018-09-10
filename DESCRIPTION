@@ -1,7 +1,7 @@
 Package: mpmtools
 Type: Package
 Title: Tools for Building and Analyzing Matrix Population Models
-Version: 0.1.0
+Version: 0.1.0.9000
 Date/Publication: 2018-09-10
 Authors@R: person(c("Bruce", "E."), "Kendall", email = "kendall@bren.ucsb.edu",
     role = c("aut", "cre"))
