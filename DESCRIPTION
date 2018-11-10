@@ -19,4 +19,8 @@ BugReports: https://github.com/BruceKendall/mpmtools/issues
 LazyData: true
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
-Suggests: testthat
+Suggests: 
+    testthat,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
