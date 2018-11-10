@@ -1,10 +1,10 @@
 ---
-title: "Vignette Title"
-author: "Vignette Author"
+title: "Rationale and Roadmap"
+author: "Bruce E. Kendall"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Rationale and Roadmap}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -16,6 +16,31 @@ knitr::opts_chunk$set(
 )
 ```
 
+Why do we need a new package for "Building and Analyzing Matrix Population Models?" 
+After all, R is built on matrix manipulation, and a number of packages exist that support ecological population modeling, including matrix population models (see next section).
+
+However, a matrix *population* model is not just a matrix: it synthesizes information about age-, stage-, and/or size-dependent demography, development (growth), and movement; may be time-varying, and may contain rates that are density- or frequency-dependent. 
+The existing tools for constructing and analyzing such models either require that the user do this synthesizing themselves or put strong constraints on the structure of the model. 
+In a recent review of the literature on published matrix population models (MPMs), many constructed by non-modelers (i.e., the field biologists who studied the population), I and my co-authors found that a large fraction of MPMs were constructed incorrectly. 
+This is probably due in part to the fact that most textbook descriptions of MPM construction are incomplete, inaccessible to non-modelers, and/or incoherent. 
+Furthermore, some of the steps involved in converting biological parameters into matrix elements require actions that are, at first encounter, biologically counter-intuitive.
+These sticking points are not deep biological insights, but generally just accounting issues.
+Thus, the first objective of **mpmtools** is to help biologists construct MPMs from underlying estimates of demographic and development rates without needing to engage with the troubling accounting issues.
+
+In addition, the standard ways of setting up MPMs is problematic in many cases.
+For example, in a long-lived animal species, a fully age-structured MPM with many dozens of age classes is cumbersome, prone to data-entry errors, and difficult to extract meaningful biological insight from.
+Thus, many biologists gravitate towards stage-structured models with a small number of biologically meaningful stage classes (juvenile, adult, etc.).
+While it is possible (although not trivial) to construct a stage-structured model that matches the *asymptotic* properties of the age-structured population being approximated, the stage-structured model will do a poor job of approximating other quantities of interest, such as transient dynamics or life-history parameters.
+A powerful solution is to construct MPMs that account for *both* age and stage (especially if there is heterogeneity in development rates); but require even more attention to accounting details than the standard models, and require active programming skills to construct and analyze.
+Thus, the second objective of **mpmtools** is to help biologists construct and analyze MPMs that simultaneously account for, and report results in relation to, broad stage classes in addition to age, or broad size classes in addition to continuous size.
+
+Finally, there are a vast number of biologically useful analyses one can do with an MPM (e.g., see Caswell 2001 and his many subsequent publications).
+However, most MPM analyses of actual populations (as opposed to methods or theory papers) only look at the asymptotic growth rate ($\lambda$) and its sensitivity to parameters, or in some cases at stochastic simulations to estimate extinction risk.
+Implementing the "nonstandard" analyses requires not only a conceptual understanding but also the ability to write (often complex) computer code.
+Many of these analyses could become standard if the programming hurdle were overcome, just as software implementations of generalized linear models (such as `glm()`) have allowed ecologists to perform statistical analyses that better match the structure of their data.
+Thus, the final objective of **mpmtools** is to help biologists learn more about their populations by making advanced analyses more accessible.
+
+## Boilerplate vignette text (to be deleted eventually)
 Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
 
 - Never uses retina figures
