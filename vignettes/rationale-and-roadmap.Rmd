@@ -3,6 +3,7 @@ title: "Rationale and Roadmap"
 author: "Bruce E. Kendall"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
+bibliography: [Bibliography.bib, Bibliography2.bib]
 vignette: >
   %\VignetteIndexEntry{Rationale and Roadmap}
   %\VignetteEngine{knitr::rmarkdown}
@@ -39,6 +40,84 @@ However, most MPM analyses of actual populations (as opposed to methods or theor
 Implementing the "nonstandard" analyses requires not only a conceptual understanding but also the ability to write (often complex) computer code.
 Many of these analyses could become standard if the programming hurdle were overcome, just as software implementations of generalized linear models (such as `glm()`) have allowed ecologists to perform statistical analyses that better match the structure of their data.
 Thus, the final objective of **mpmtools** is to help biologists learn more about their populations by making advanced analyses more accessible.
+
+## Related packages and software
+Base R
+  ~ Base R includes functions for creating matrices (`matrix()`) and performing eigenvalue/vector analysis (`eigen()`).
+    It also has various matrix product operators, including the inner product (aka "matrix multiplication;" `%*%`), the Hadamard product (entry-wise multiplication; `*`), and the outer product (`%o%`).
+    These form the basis for the analysis of MPMs, but do not provide any explicitly ecological tools.
+
+### Packages and software for ecological population modeling    
+**popbio**: Construction and Analysis of Matrix Population Models
+  ~ **popbio** [@Stubben2007] provides an R implementation of the Matlab routines from @Caswell2001 and @Morris2002a.
+    It does not, in general, provide code for other analyses in @Caswell2001 that did not come with Matlab code.
+    The only extensions are some plotting functions and `vitalsens()`, a function to calculate the sensitivity and elasticity of $\lambda$ to the underlying demographic parameters.
+    For the latter, the user needs to provide a symbolic representation of the MPM, together with parameter values.
+    The package is actively maintained with bug fixes and updates to keep up with changes in base R and other dependencies, but no new functionality has been added since 2011.
+    The underlying code is variable in the extent to which it makes use of R's efficiencies, and in the amount of input checking.
+
+popdemo: Demographic Modelling Using Projection Matrices
+  ~ **popdemo** [@Stott2018r] provides functions for projecting MPMs and analyzing $\lambda$.
+    In addition, it provides a variety of function related to transient dynamics and perturbation analysis.
+    The package has routines for testing matrix primitivity etc., and uses an S4 class for population projections that stores the matrices, population vectors, and a number of statistics.
+    The package is under reasonably active development, although the most recent addition is the projection features, which arguably are least innovative (in purpose, if not in implementation).
+
+primer: Functions and data for "A Primer of Ecology with R"
+  ~ This package accompanies a book [@Stevens2009] that covers a wide range of introductory topics in ecological modeling. MPMs are covered in chapter 2; the one function provided for this chapter calculates all the quantities that can be extracted from the eigenanalysis. Note that the example for parameterizing a model from data fails to include a survival in the reproduction transtions.
+
+pop: A Flexible Syntax for Population Dynamic Modelling
+  ~ **pop** [@Golding2016] is an intriguing attempt to create a common interface framework for a wide range of population models, including MPMs.
+    For MPMs, it appears that users still need to fully understand what should go into each transition element, which is one of the challenges we identified.
+    Furthermore, development appears to have ceased at version 0.1 (which incoporporates simple MPMs and discrete patches of habitat) in 2016.
+
+Rramas: Matrix Population Models
+  ~ **Rramas** [@delaCruzRot2017r] projects MPMs with environmental and demographic stochasticity. It is meant to reproduce the simulation functionality of the commercial program Ramas, but does not appear to have any connection to that program.
+
+population: Models for Simulating Populations
+  ~ **population** [@Chapron2018r] appears to be a generalization of **pop.wolf**. It provides a function to simulate a density-independent age-structured MPM with environmental stochasticity.
+
+PVA: Population viability analysis in R
+  ~ **PVA** [@Kendall_PVA2018r] (available from BruceKendall/PVA on GitHub) contains tools for simulating and analyzing simple population models, with a focus on demonstrations for teaching purposes. It does include functions for working with MPMs, representing my early attempts to address some of the issues that **mpmtools** is aimed at. These will probably be removed once **mpmtools** is mature.
+
+Vortex: Population Viability Analysis software
+  ~ Vortex (http://www.vortex10.org) is a free (but not open-source) standalone program to perform population viability analysis on age-structured models. The user only needs to input fertility and survival rates, and doesn't need to combine them. The program focuses on stochastic simulation, but it is possible to extract the underlying deterministic matrix and some of its properties. However, in its standard form the model is rather inflexible: all individuals of a given sex reach reproductive maturity at the same age, and thereafter have unchanging demography. It is possible to build more complex life history models using functions, but this will be beyond the capacity of most non-modelers.
+
+### Packages for parameter estimation
+lmf: Functions for estimation and inference of selection in age-structured populations
+  ~ **lmf** [@Kvalnes2013] estimates directional and fluctuating selection in age-structured populations and provides methods for statistical inference using the procedures developed by Engen et al. 2012. 
+
+poptrend: Analyze population trends from survey count data
+  ~ **poptrend** provides code to accompany @Knape2016, who analyzed trends in Swedish bird populations using count data. 
+
+### Packages for human population analysis
+bayesPop: Probabilistic Population Projection
+  ~ **bayesPop** [@Sevcikova2016] produces stochastic projections of human populations in each country on Earth.
+
+demography: Forecasting mortality and fertility data
+  ~ Functions for demographic analysis including lifetable calculations, Lee-Carter modelling and functional data analysis of mortality rates.
+    **demography** [@Hyndman2017] is focused on human population projections. Some of the life table calculations may be useful in ecological analysis.
+
+POPdemog: Plot Population Demographic History
+  ~ Despite its intriguing title, **POPdemog** [@Zhou2017] actually provides visualizations of human population migration, based on coalescent analyses of genomes.
+
+LexisPlotR: Plot Lexis Diagrams for Demographic Purposes
+  ~ **LexisPlotR** [@Ottolinger2016r] provides (not surprisingly) functions to create and display a *Lexis diagram*, a two dimensional diagram that is used to represent events (such as births or deaths) that occur to individuals belonging to different cohorts. It is employed in human demography; I'm not sure how useful it is in populations with discrete breeding, as all individuals in a cohort will be overlaid.
+
+### Packages for other specialized populations
+
+albopictus: Age-Structured Population Dynamics Model
+  ~ **albopictus** [@Erguler2018r] iterates a cohort of individuals forward with a daily timestep, incorporating mortality and development, and allowing new cohorts to be added extrinsically. 
+    It accompanies a pair of papers on mosquito population dynamics.
+
+capm: Companion Animal Population Management
+  ~ **capm** [@SantosBaquero2015] provides functions for creating and analyzing a population model of companion animals (e.g., domestic dogs and cats).
+
+pop.wolf: Models for Simulating Wolf Populations
+  ~ **pop.wolf** [@Chapron2016] is an R interface to a C program that runs an individual-based simulation of wolf population dynamics. There is little documentation; my guess is that this was code for a scientific paper (although no such paper is cited in the package).
+
+LexisPlotR: Plot Lexis Diagrams for Demographic Purposes
+  ~ **LexisPlotR** provides (non surprisingly) functions to create and display a *Lexis diagram*, a two dimensional diagram that is used to represent events (such as births or deaths) that occur to individuals belonging to different cohorts. It is employed in human demography; I'm not sure how useful it is in populations with discrete breeding, as all individuals in a cohort will be overlaid.
+  
 
 ## Boilerplate vignette text (to be deleted eventually)
 Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
@@ -88,3 +167,5 @@ Also a quote using `>`:
 
 > "He who gives up [code] safety for [code] speed deserves neither."
 ([via](https://twitter.com/hadleywickham/status/504368538874703872))
+
+## References
