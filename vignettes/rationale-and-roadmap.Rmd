@@ -64,6 +64,8 @@ popdemo: Demographic Modelling Using Projection Matrices
 
 primer: Functions and data for "A Primer of Ecology with R"
   ~ This package accompanies a book [@Stevens2009] that covers a wide range of introductory topics in ecological modeling. MPMs are covered in chapter 2; the one function provided for this chapter calculates all the quantities that can be extracted from the eigenanalysis. Note that the example for parameterizing a model from data fails to include a survival in the reproduction transtions.
+  
+ipmpack
 
 pop: A Flexible Syntax for Population Dynamic Modelling
   ~ **pop** [@Golding2016] is an intriguing attempt to create a common interface framework for a wide range of population models, including MPMs.
@@ -118,54 +120,58 @@ pop.wolf: Models for Simulating Wolf Populations
 LexisPlotR: Plot Lexis Diagrams for Demographic Purposes
   ~ **LexisPlotR** provides (non surprisingly) functions to create and display a *Lexis diagram*, a two dimensional diagram that is used to represent events (such as births or deaths) that occur to individuals belonging to different cohorts. It is employed in human demography; I'm not sure how useful it is in populations with discrete breeding, as all individuals in a cohort will be overlaid.
   
+## Roadmap
+Version 0.1 is very basic: It contains only two construction functions (construct a Leslie matrix from a demography schedule; convert a prebreeding census model to a postbreeding census model) and one analysis tool (calculate the asymptotic growth rate).
+A great deal more needs to be done to make this useful.
 
-## Boilerplate vignette text (to be deleted eventually)
-Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
+### Accomodate the two commonest use cases of stage-structured animal MPMs
+Many animal populations modeled by stage-structured MPMs fall into one of two groups:
 
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
+1. Stage-structured populations where all individuals in each stage have the same demography, and the maturation from one stage to the next occurs at a fixed age.
+This is commonly used for long-lived mammals and reptilians [e.g., sea turtles; @Crowder1994]. 
+We call these "stage-for-age" models.
 
-## Vignette Info
+2. Size-structured populations in which growth is approximately deterministic (e.g., via a von Bertalanffy function) and demography is size-dependent, and the analyst wants to collapse the size distribution into a small number of size/stage classes. 
+These are commonly used for long-lived fish [e.g., XXX].
+We call these "size-for-age" models; conceptually, they differ from stage-for-age models by having substantial demographic heterogeneity within each size class.
 
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
+There are two general approaches for dealing with such populations:
 
-## Styles
+1. Construct stage-structured MPMs that approximate as closely as possible the full age-structured MPM [@Crowder1994; @Caswell2001; @Fujiwara2017].
 
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
+2. Construct the full age-structured MPM, and then collapse the results of the analyis back into the smaller number of stages or size classes.
 
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
+Building functions to do this is the next priority of the project. 
+The second part will require creating the first iteration of an "mpm-class" that tracks stage/size class along with age. 
+It will also require some research on how to aggregate the reproductive value, as I don't think we got it right in our paper.
 
-## Figures
+### Accomodate multi-sex models
+Functions to create and manipulate models that explicitly track males and females.
+This includes a frequency-dependent mating function.
+Also allow newborns to transition into multiple classes.
+This is also the place to add clonal reproduction and fission.
 
-The figure sizes have been customised so that you can easily put two images side-by-side. 
+### Use periodic models to accomodate more flexible descriptions of life history
+In many cases, it may be desireable to incorporate seasonal variation in demography as well as separating mating from birth.
+This can be done by letting the user specify individual transition events (including some, such as birth, that don't have a duration), and using the theory of periodic models to assemble them into annual models.
+While the end result is a single matrix, indicating that, in principle, the matrix elements could be calculated directly, this approach will probably be easier for the user to apply accurately.
 
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
-```
+Furthermore, this is probably the way to flexibly incorporate analysis in terms of underlying parameters, as even a standard model can be written as a product of matrices reflecting births, survival, and stage transitions.
+At this point we will include a full set of asymptotic analysis functions.
 
-You can enable figure captions by `fig_caption: yes` in YAML:
+### Provide a link to IPMs
+The goal here is to allow the analysis of integral projection models (e.g., from **ipmpack**) to be summarized by size classes.
+Also consider other ways in which continuous state variables might be included (i.e., creating our own IPM constructor function).
 
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
+### Stochastic MPMs
+Extend the mpm-class to incorporate the information needed to represent environmental stochasticity (multiple observed matrices, temporal parameter covariances) and demographic stochasticity (distributional forms, variance parameters).
+Also write functions to project and analyze these models (e.g., sensitivity analysis of stochastic growth rate).
 
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+### Density dependence
 
-## More Examples
+### Other analyses
+Catalog and prioritize the nonstandard analyses from Caswell and elsewhere.
+Investigate the vec-permutation formalism for compactly representing more complex models.
 
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
-```
-
-Also a quote using `>`:
-
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
 
 ## References
