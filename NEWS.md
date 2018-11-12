@@ -1,3 +1,7 @@
+# mpmtools 0.1.0.9xxx
+## New vignettes
+- Rationale and Roadmap
+
 # mpmtools 0.1.0
 ## New functions
 ### Matrix construction and reshaping functions
