@@ -138,3 +138,34 @@ pre_to_post <- function(S0, Amat = NULL, Fmat = NULL, Umat = NULL) {
   }
   return(F_post + U_post)
 }
+
+stage4age <- function(x, survival = NULL, maternity = NULL, duration = NULL,
+                      type = c("unrolled", "AAS", "SAS", "FAS"),
+                      model = c("pre", "post")) {
+  if(is.data.frame(x)) {
+    stopifnot(c("stage", "survival", "maternity", "duration") %in% names(x))
+    stage_name <- x$stage
+    survival <- x$survival
+    maternity <- x$maternity
+    duration <- x$duration
+  } else {
+    stage_name <- x
+  }
+
+  n_stage <- length(stage_name)
+
+  if (type == "unrolled") {
+    stage_index <- seq_along(stage_name)
+    if (is.inf(duration[n_stage])) duration[n_stage] <- 1
+    stage2age <- rep(stage_index, duration)
+    ages <- seq_along(stage2age) - 1
+    lifetable <- data.frame(x = ages,
+                            sx = survival[stage2age],
+                            mx = maternity[stage2age]
+                            )
+    A <- make_Leslie_matrix(x, type = type)
+    #########
+    # Construct row and column names
+  }
+
+}
