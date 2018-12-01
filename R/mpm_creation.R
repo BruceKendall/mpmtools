@@ -139,26 +139,56 @@ pre_to_post <- function(S0, Amat = NULL, Fmat = NULL, Umat = NULL) {
   return(F_post + U_post)
 }
 
-make_stage4age_matrix <- function(x, survival = NULL, maternity = NULL, duration = NULL,
-  type = c("unrolled", "AAS", "SAS", "FAS"), model = c("post", "pre")) {
-  # Argument checking
-  if(is.data.frame(x)) {
-    stopifnot(c("stage", "survival", "maternity", "duration") %in% names(x))
-    stage_name <- x$stage
-    survival <- x$survival
-    maternity <- x$maternity
-    duration <- x$duration
+#' Construct a stage-structured matrix with given mean stage durations
+#'
+#' @param stage_table Either a vector of stage names or a data frame with columns
+#' "stage_name", "survival", "maternity", and "duration". In the latter case the next
+#' three arguments do not need to be provided
+#' @param survival A vector of stage-specific survival, on a per-timestep basis
+#' @param maternity A vector of stage-specific maternities (number of offspring produced
+#' by an individual in a given stage)
+#' @param duration A vector of average number of timesteps spent in each stage. If the
+#' final stage continues indefinitely (there is no maximum age) then the last element
+#' should be "Inf"
+#' @param approx_method The rule for generating the matrix (see details). Defaults to
+#' "unrolled"
+#' @param model Whether the matrix should represent a prebreeding ("pre") or postbreeding
+#' ("post") census model. Defaults to "post"
+#'
+#' @details There is no universally "best" way to construct a stage structured model
+#' based on mean stage durations. This function implements four approaches, with names
+#' based on the sheme in Kendall et al. (in review).
+#'
+#' \code{approx_method = "unrolled"}: this creates an age-structured Leslie matrix where stage i
+#' is replicated \code{duration[i]} times. This is a good solution if the variance in stage
+#' duration is small, and is the best solution if there is no variance in stage duration:
+#' it correctly generates both the transient and asymptotic dynamics. The cost is a
+#' potentially large matrix, which doesn't cause R any difficulty but may be challenging
+#' to visualize (future developments will provide tools to aggregate results by stage).
+#' This method requires that all elements of \code{duration} be integers.
+#'
+#' @return A projection matrix. For the "unrolled" case the row and column names are a
+#' concatenation of the stage name and the age; for the others they are the stage names.
+#' @export
+#'
+#' @examples
+make_stage4age_matrix <- function(stage_table, survival = stage_table$survival,
+  maternity = stage_table$maternity, duration = stage_table$duration,
+  approx_method = c("unrolled", "AAS", "SAS", "FAS"), model = c("post", "pre")) {
+  # Argument unpacking
+  if(is.data.frame(stage_table)) {
+    stage_name <- stage_table$stage
   } else {
-    stage_name <- x
+    stage_name <- stage_table
   }
-  type <- match.arg(type)
+  approx_method <- match.arg(approx_method)
   model <- match.arg(model)
 
   # Useful indicies
   n_stage <- length(stage_name)
   stage_index <- seq_along(stage_name)
 
-  if (type == "unrolled") {
+  if (approx_method == "unrolled") {
     if (is.infinite(duration[n_stage])) duration[n_stage] <- 1
     stage2age <- rep(stage_index, duration)
     ages <- seq_along(stage2age) - 1
