@@ -139,9 +139,9 @@ pre_to_post <- function(S0, Amat = NULL, Fmat = NULL, Umat = NULL) {
   return(F_post + U_post)
 }
 
-stage4age <- function(x, survival = NULL, maternity = NULL, duration = NULL,
-                      type = c("unrolled", "AAS", "SAS", "FAS"),
-                      model = c("pre", "post")) {
+make_stage4age_matrix <- function(x, survival = NULL, maternity = NULL, duration = NULL,
+  type = c("unrolled", "AAS", "SAS", "FAS"), model = c("post", "pre")) {
+  # Argument checking
   if(is.data.frame(x)) {
     stopifnot(c("stage", "survival", "maternity", "duration") %in% names(x))
     stage_name <- x$stage
@@ -151,21 +151,30 @@ stage4age <- function(x, survival = NULL, maternity = NULL, duration = NULL,
   } else {
     stage_name <- x
   }
+  type <- match.arg(type)
+  model <- match.arg(model)
 
+  # Useful indicies
   n_stage <- length(stage_name)
+  stage_index <- seq_along(stage_name)
 
   if (type == "unrolled") {
-    stage_index <- seq_along(stage_name)
-    if (is.inf(duration[n_stage])) duration[n_stage] <- 1
+    if (is.infinite(duration[n_stage])) duration[n_stage] <- 1
     stage2age <- rep(stage_index, duration)
     ages <- seq_along(stage2age) - 1
     lifetable <- data.frame(x = ages,
                             sx = survival[stage2age],
                             mx = maternity[stage2age]
                             )
-    A <- make_Leslie_matrix(x, type = type)
-    #########
+    A <- make_Leslie_matrix(lifetable, model = model)
+
     # Construct row and column names
+    classnames <- paste(stage_name[stage2age], ages, sep = "")
+    if (model == "pre") classnames <- classnames[-1]
+    rownames(A) <- classnames
+    colnames(A) <- classnames
   }
+
+  A
 
 }
