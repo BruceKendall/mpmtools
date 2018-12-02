@@ -58,6 +58,46 @@ make_Leslie_matrix <- function(x, sx = NULL, mx = NULL, model = c("pre", "post")
   return(A)
 }
 
+make_Lefkovitch_matrix <- function(stage_table, survival = stage_table$survival,
+                                   maternity = stage_table$maternity,
+                                   maturation = stage_table$maturation,
+                                   model = c("pre", "post")) {
+
+  # Argument unpacking
+  if(is.data.frame(stage_table)) {
+    stage_name <- stage_table$stage
+  } else {
+    stage_name <- stage_table
+  }
+  model <- match.arg(model)
+
+  # Useful indicies
+  n_stage <- length(stage_name)
+  stage_index <- seq_along(stage_name)
+
+  # Build matrix for survival/maturation "season"
+  sm_mat <- subdiag(n_stage, (survival * maturation)[-n_stage]) +
+    diag(survival * (1 - maturation))
+
+  # Build matrix for maternity "season"
+  mat_mat <- diag(n_stage)
+  mat_mat[1,] <- mat_mat[1,] + maternity
+
+  # Combine them approriately
+  if (model == "pre") {
+    A <- sm_mat %*% mat_mat
+  } else {
+    A <- mat_mat %*% sm_mat
+  }
+
+  # Tidy up the matrix
+  rownames(A) <- stage_name
+  colnames(A) <- stage_name
+  A <- dropzeros(A)
+
+  A
+}
+
 #' Convert prebreeding census MPM to corresponding postbreeding census MPM
 #'
 #' Prebreeding census MPMs and postbreeding census MPMs are functionally equivalent (they
