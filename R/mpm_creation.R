@@ -58,10 +58,36 @@ make_Leslie_matrix <- function(x, sx = NULL, mx = NULL, model = c("pre", "post")
   return(A)
 }
 
+#' Create a Lefkovitch stage-structured matrix
+#'
+#' In a Lefkovitch model, individuals may either stay in the current stage or transition
+#' to the next stage, with the rate of moving from stage i to stage i+1, conditional on
+#' survival, being given as g_i (commonly called "growth" but really representing
+#' "maturation"). This function creates a Lefkovitch matrix using user-supplied
+#' information on maturation rates as well as stage-specific survival and maternity
+#' rates.
+#'
+#' @param stage_table Either a vector of stage names or a data frame with columns
+#' "stage_name", "survival", "maternity", and "maturation". In the latter case the next
+#' three arguments do not need to be provided
+#' @param survival A vector of stage-specific survival, on a per-timestep basis
+#' @param maternity A vector of stage-specific maternities (number of offspring produced
+#' by an individual in a given stage)
+#' @param maturation A vector of the maturation rate, g_i, representing the fraction of
+#' individuals that (conditional on survival) should move on to the next stage. If the
+#' stage only lasts one timestep (all surviving individuals mature) then use a value
+#' of 1.
+#' @param model Whether the matrix should represent a prebreeding ("pre") or postbreeding
+#' ("post") census model. Defaults to "post"
+#'
+#' @return A matrix representing the Lefkovitch MPM.
+#' @export
+#'
+#' @examples
 make_Lefkovitch_matrix <- function(stage_table, survival = stage_table$survival,
                                    maternity = stage_table$maternity,
                                    maturation = stage_table$maturation,
-                                   model = c("pre", "post")) {
+                                   model = c("post", "pre")) {
 
   # Argument unpacking
   if(is.data.frame(stage_table)) {
