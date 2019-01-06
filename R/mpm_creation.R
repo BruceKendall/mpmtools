@@ -288,6 +288,22 @@ pre_to_post <- function(S0, Amat = NULL, Fmat = NULL, Umat = NULL) {
 #' @export
 #'
 #' @examples
+#' # Recreate the model published as Table 2 of Crowder et al. (1994)
+#' # (which differs slightly in A[1, 4], presumbably from a rounding error)
+#' make_stage4age_matrix(loggerhead[[2]], approx_method = "AAS")
+#'
+#' # Reducing the tolerance only changes the matrix slightly
+#' make_stage4age_matrix(loggerhead[[2]], approx_method = "AAS", tol = 1e-8)
+#'
+#' # Attempt to recreate the model published as Table 4 of Crouse et al. (1987).
+#' # However, the published model has a typo in A[7, 7] and incorrect reproduction terms.
+#' make_stage4age_matrix(loggerhead[[1]], approx_method = "SAS")
+#'
+#' # Compare asymptotic growth rate from AAS and unrolled approximations
+#' A_AAS <- make_stage4age_matrix(loggerhead[[2]], approx_method = "AAS")
+#' A_unrolled <- make_stage4age_matrix(loggerhead[[2]])
+#' lambda1(A_AAS)
+#' lambda1(A_unrolled)
 make_stage4age_matrix <- function(stage_table, survival = stage_table$survival,
   maternity = stage_table$maternity, duration = stage_table$duration,
   approx_method = c("unrolled", "AAS", "SAS", "FAS"), model = c("post", "pre"),

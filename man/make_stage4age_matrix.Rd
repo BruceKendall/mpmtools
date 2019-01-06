@@ -85,6 +85,24 @@ duration variance is uncontrolled (it is equal to the mean). However, it is the 
 solution proposed by Caswell (2001) and, being easy to calculate by hand, is popular
 in the literature.
 }
+\examples{
+# Recreate the model published as Table 2 of Crowder et al. (1994)
+# (which differs slightly in A[1, 4], presumbably from a rounding error)
+make_stage4age_matrix(loggerhead[[2]], approx_method = "AAS")
+
+# Reducing the tolerance only changes the matrix slightly
+make_stage4age_matrix(loggerhead[[2]], approx_method = "AAS", tol = 1e-8)
+
+# Attempt to recreate the model published as Table 4 of Crouse et al. (1987).
+# However, the published model has a typo in A[7, 7] and incorrect reproduction terms.
+make_stage4age_matrix(loggerhead[[1]], approx_method = "SAS")
+
+# Compare asymptotic growth rate from AAS and unrolled approximations
+A_AAS <- make_stage4age_matrix(loggerhead[[2]], approx_method = "AAS")
+A_unrolled <- make_stage4age_matrix(loggerhead[[2]])
+lambda1(A_AAS)
+lambda1(A_unrolled)
+}
 \references{
 Caswell, H. 2001. Matrix population models: Construction, analysis, and
 interpretation, 2nd edition. Sinauer Associates, Sunderland, MA.
