@@ -233,6 +233,16 @@ pre_to_post <- function(S0, Amat = NULL, Fmat = NULL, Umat = NULL) {
 #' to visualize (future developments will provide tools to aggregate results by stage).
 #' This method requires that all elements of \code{duration} be integers.
 #'
+#' \code{approx_method = "SAS"}: this creates a stage-structured Lefkovitch model where
+#' the fraction of individual maturing out of stage i is given by the formula in Crouse
+#' et al. (1987). This reproduces the mean stage durations that would be observed if one
+#' is following a cohort through time, and hence is probably the best stage-based solution
+#' for calculating quantities such as R0, mean age at maturity, or some definitions of
+#' generation time. However, unless lambda = 1, this model will not give the correct
+#' mean stage duration under asymptotic conditions. As with AAS and FAS, the variance
+#' of the stage durations cannot be set, being equal to the means.
+#'
+#'
 #' \code{approx_method = "FAS"}: this creates a stage-structured Lefkovitch model where
 #' the fraction of individual maturing out of stage i is \code{1/duration[i]}. This is
 #' not likely to ever be a good solution, as the mean stage duration will only be matched
@@ -276,6 +286,11 @@ make_stage4age_matrix <- function(stage_table, survival = stage_table$survival,
     if (model == "pre") classnames <- classnames[-1]
     rownames(A) <- classnames
     colnames(A) <- classnames
+  } else if (approx_method == "SAS") {
+    maturation = survival^(duration - 1) * (1 - survival) / (1 - survival^duration)
+    st_table <- data.frame(stage = stage_name, survival = survival, maternity = maternity,
+                           maturation = maturation)
+    A <- make_Lefkovitch_matrix(st_table, model = model)
   } else if (approx_method == "FAS") {
     st_table <- data.frame(stage = stage_name, survival = survival, maternity = maternity,
                            maturation = 1/duration)
