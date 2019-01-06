@@ -304,13 +304,20 @@ make_stage4age_matrix <- function(stage_table, survival = stage_table$survival,
     rownames(A) <- classnames
     colnames(A) <- classnames
   } else if (approx_method == "SAS") {
-    maturation = survival^(duration - 1) * (1 - survival) / (1 - survival^duration)
-    st_table <- data.frame(stage = stage_name, survival = survival, maternity = maternity,
+    maturation <- survival^(duration - 1) * (1 - survival) / (1 - survival^duration)
+    if (is.infinite(duration[n_stage])) maturation[n_stage] <- 0
+    st_table <- data.frame(stage = stage_name,
+                           survival = survival,
+                           maternity = maternity,
                            maturation = maturation)
     A <- make_Lefkovitch_matrix(st_table, model = model)
   } else if (approx_method == "FAS") {
-    st_table <- data.frame(stage = stage_name, survival = survival, maternity = maternity,
-                           maturation = 1/duration)
+    maturation <- 1/duration
+    if (is.infinite(duration[n_stage])) maturation[n_stage] <- 0
+    st_table <- data.frame(stage = stage_name,
+                           survival = survival,
+                           maternity = maternity,
+                           maturation = maturation)
     A <- make_Lefkovitch_matrix(st_table, model = model)
   }
 
