@@ -223,7 +223,7 @@ pre_to_post <- function(S0, Amat = NULL, Fmat = NULL, Umat = NULL) {
 #'
 #' @details There is no universally "best" way to construct a stage structured model
 #' based on mean stage durations. This function implements four approaches, with names
-#' based on the sheme in Kendall et al. (in review).
+#' based on the scheme in Kendall et al. (in review).
 #'
 #' \code{approx_method = "unrolled"}: this creates an age-structured Leslie matrix where stage i
 #' is replicated \code{duration[i]} times. This is a good solution if the variance in stage
@@ -232,6 +232,13 @@ pre_to_post <- function(S0, Amat = NULL, Fmat = NULL, Umat = NULL) {
 #' potentially large matrix, which doesn't cause R any difficulty but may be challenging
 #' to visualize (future developments will provide tools to aggregate results by stage).
 #' This method requires that all elements of \code{duration} be integers.
+#'
+#' \code{approx_method = "FAS"}: this creates a stage-structured Lefkovitch model where
+#' the fraction of individual maturing out of stage i is \code{1/duration[i]}. This is
+#' not likely to ever be a good solution, as the mean stage duration will only be matched
+#' under very special conditions and the stage duration variance is uncontrolled (it is
+#' equal to the mean). However, it is the first solution proposed by Caswell and, being
+#' easy to calculate by hand, is popular in the literature.
 #'
 #' @return A projection matrix. For the "unrolled" case the row and column names are a
 #' concatenation of the stage name and the age; for the others they are the stage names.
@@ -269,6 +276,10 @@ make_stage4age_matrix <- function(stage_table, survival = stage_table$survival,
     if (model == "pre") classnames <- classnames[-1]
     rownames(A) <- classnames
     colnames(A) <- classnames
+  } else if (approx_method == "FAS") {
+    st_table <- data.frame(stage = stage_name, survival = survival, maternity = maternity,
+                           maturation = 1/duration)
+    A <- make_Lefkovitch_matrix(st_table, model = model)
   }
 
   A
