@@ -44,3 +44,8 @@ subdiag <- function(A, sx) {
   B[-1, -n] <- diag(sx, n - 1, n - 1)
   return(B + A)
 }
+
+dropzeros <- function(A) {
+  zerorows <- rowSums(A) == 0
+  A[!zerorows, !zerorows]
+}
