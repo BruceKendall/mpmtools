@@ -1,4 +1,11 @@
 # mpmtools 0.1.0.9xxx
+## New functions
+### Matrix construction and reshaping functions
+- make_stage4age_matrix
+
+## New datasets
+- loggerhead
+
 ## New vignettes
 - Rationale and Roadmap
 
