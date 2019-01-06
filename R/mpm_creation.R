@@ -272,7 +272,7 @@ pre_to_post <- function(S0, Amat = NULL, Fmat = NULL, Umat = NULL) {
 #'   concatenation of the stage name and the age; for the others they are the stage names.
 #'
 #' @references Caswell, H. 2001. Matrix population models: Construction, analysis, and
-#'   interpretation. Sinauer Associates, Sunderland, MA.
+#'   interpretation, 2nd edition. Sinauer Associates, Sunderland, MA.
 #'
 #'   Crouse, D. T., L. B. Crowder, and H. Caswell. 1987. A stage-based population model
 #'   for loggerhead sea turtles and implications for conservation. Ecology 68:1412-1423.
@@ -291,7 +291,7 @@ pre_to_post <- function(S0, Amat = NULL, Fmat = NULL, Umat = NULL) {
 make_stage4age_matrix <- function(stage_table, survival = stage_table$survival,
   maternity = stage_table$maternity, duration = stage_table$duration,
   approx_method = c("unrolled", "AAS", "SAS", "FAS"), model = c("post", "pre"),
-  tol = 10^{-6}) {
+  tol = 10^(-6)) {
   # Argument unpacking
   if(is.data.frame(stage_table)) {
     stage_name <- stage_table$stage
