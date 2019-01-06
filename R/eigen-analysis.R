@@ -15,5 +15,5 @@
 #' @examples
 #' lambda1(Caswell_Ex_2.1)
 lambda1 <- function(A) {
-  Re(eigen(A)$values[1])
+  Re(eigen(A, symmetric = FALSE, only.values = TRUE)$values[1])
 }

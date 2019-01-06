@@ -9,6 +9,9 @@
 ## New vignettes
 - Rationale and Roadmap
 
+## Updated functions
+- lambda1: Added arguments to eigen() to speed execution
+
 # mpmtools 0.1.0
 ## New functions
 ### Matrix construction and reshaping functions
