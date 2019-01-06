@@ -220,6 +220,8 @@ pre_to_post <- function(S0, Amat = NULL, Fmat = NULL, Umat = NULL) {
 #'   "unrolled"
 #' @param model Whether the matrix should represent a prebreeding ("pre") or postbreeding
 #'   ("post") census model. Defaults to "post"
+#' @param tol The convergence tolerance for lambda in estimating the AAS model. Defaults
+#'   to 1e-6.
 #'
 #' @details There is no universally "best" way to construct a stage structured model based
 #'   on mean stage durations. This function implements four approaches, with names based
@@ -233,6 +235,20 @@ pre_to_post <- function(S0, Amat = NULL, Fmat = NULL, Umat = NULL) {
 #'   be challenging to visualize (future developments will provide tools to aggregate
 #'   results by stage). This method requires that all elements of \code{duration} be
 #'   integers.
+#'
+#'   \code{approx_method = "AAS"} ("asymptotic age structure"): this creates a
+#'   stage-structured Lefkovitch model where the fraction of individual maturing out of
+#'   stage i is given by the formula in Crowder et al. (1994). This reproduces the mean
+#'   stage durations that would be observed if the population were at the asymptotic stage
+#'   structure, and (with suitable care in the sensitivity calculations) can reproduce the
+#'   asymptotic calculations of the unrolled matrix. However, the model will likely not
+#'   give useful estimates of transient dynamics, and will not give reliable statistics
+#'   that are based on folloing cohorts (such as R0), for which SAS is preferred. As with
+#'   SAS and FAS, the variance of the stage durations cannot be set, being equal to the
+#'   means. This method requires an iterative approach, as the maturation fraction depends
+#'   on the asymptotic growth rate, lambda1; the argument \code{tol} is used to determine
+#'   when convergence has occurred. Smaller values will produce more precise estimates of
+#'   the transition rates, but will require longer to calculate.
 #'
 #'   \code{approx_method = "SAS"} ("stable age structure"): this creates a
 #'   stage-structured Lefkovitch model where the fraction of individual maturing out of
@@ -256,25 +272,26 @@ pre_to_post <- function(S0, Amat = NULL, Fmat = NULL, Umat = NULL) {
 #'   concatenation of the stage name and the age; for the others they are the stage names.
 #'
 #' @references Caswell, H. 2001. Matrix population models: Construction, analysis, and
-#' interpretation. Sinauer Associates, Sunderland, MA.
+#'   interpretation. Sinauer Associates, Sunderland, MA.
 #'
-#' Crouse, D. T., L. B. Crowder, and H. Caswell. 1987. A stage-based population model for
-#' loggerhead sea turtles and implications for conservation. Ecology 68:1412-1423.
+#'   Crouse, D. T., L. B. Crowder, and H. Caswell. 1987. A stage-based population model
+#'   for loggerhead sea turtles and implications for conservation. Ecology 68:1412-1423.
 #'
-#' Crowder, L. B., D. T. Crouse, S. S. Heppell, and T. H. Martin. 1994. Predicting the
-#' impact of turtle excluder devices on loggerhead sea turtle populations. Ecological
-#' Applications 4:437-445.
+#'   Crowder, L. B., D. T. Crouse, S. S. Heppell, and T. H. Martin. 1994. Predicting the
+#'   impact of turtle excluder devices on loggerhead sea turtle populations. Ecological
+#'   Applications 4:437-445.
 #'
-#' Kendall, B.E., M. Fujiwara, J. Diaz-Lopez, S. Schneider, J. Voigt, and S. Wiesner. In
-#' review. Persistent problems in the construction of matrix population models. Ecological
-#' Modelling.
+#'   Kendall, B.E., M. Fujiwara, J. Diaz-Lopez, S. Schneider, J. Voigt, and S. Wiesner. In
+#'   review. Persistent problems in the construction of matrix population models.
+#'   Ecological Modelling.
 #'
 #' @export
 #'
 #' @examples
 make_stage4age_matrix <- function(stage_table, survival = stage_table$survival,
   maternity = stage_table$maternity, duration = stage_table$duration,
-  approx_method = c("unrolled", "AAS", "SAS", "FAS"), model = c("post", "pre")) {
+  approx_method = c("unrolled", "AAS", "SAS", "FAS"), model = c("post", "pre"),
+  tol = 10^{-6}) {
   # Argument unpacking
   if(is.data.frame(stage_table)) {
     stage_name <- stage_table$stage
@@ -303,6 +320,22 @@ make_stage4age_matrix <- function(stage_table, survival = stage_table$survival,
     if (model == "pre") classnames <- classnames[-1]
     rownames(A) <- classnames
     colnames(A) <- classnames
+  } else if (approx_method == "AAS") {
+    lambda_old <- 0
+    lambda_new <- 1
+    while(abs(lambda_new - lambda_old) > tol) {
+      lambda_old <- lambda_new
+      surv_lam <- survival/lambda_old
+      maturation <- surv_lam^(duration - 1) * (1 - surv_lam) / (1 - surv_lam^duration)
+      if (is.infinite(duration[n_stage])) maturation[n_stage] <- 0
+      st_table <- data.frame(stage = stage_name,
+                             survival = survival,
+                             maternity = maternity,
+                             maturation = maturation)
+      A_try <- make_Lefkovitch_matrix(st_table, model = model)
+      lambda_new <- lambda1(A_try)
+    }
+    A <- A_try
   } else if (approx_method == "SAS") {
     maturation <- survival^(duration - 1) * (1 - survival) / (1 - survival^duration)
     if (is.infinite(duration[n_stage])) maturation[n_stage] <- 0
