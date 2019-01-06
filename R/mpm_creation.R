@@ -208,50 +208,67 @@ pre_to_post <- function(S0, Amat = NULL, Fmat = NULL, Umat = NULL) {
 #' Construct a stage-structured matrix with given mean stage durations
 #'
 #' @param stage_table Either a vector of stage names or a data frame with columns
-#' "stage_name", "survival", "maternity", and "duration". In the latter case the next
-#' three arguments do not need to be provided
+#'   "stage_name", "survival", "maternity", and "duration". In the latter case the next
+#'   three arguments do not need to be provided
 #' @param survival A vector of stage-specific survival, on a per-timestep basis
 #' @param maternity A vector of stage-specific maternities (number of offspring produced
-#' by an individual in a given stage)
+#'   by an individual in a given stage)
 #' @param duration A vector of average number of timesteps spent in each stage. If the
-#' final stage continues indefinitely (there is no maximum age) then the last element
-#' should be "Inf"
+#'   final stage continues indefinitely (there is no maximum age) then the last element
+#'   should be "Inf"
 #' @param approx_method The rule for generating the matrix (see details). Defaults to
-#' "unrolled"
+#'   "unrolled"
 #' @param model Whether the matrix should represent a prebreeding ("pre") or postbreeding
-#' ("post") census model. Defaults to "post"
+#'   ("post") census model. Defaults to "post"
 #'
-#' @details There is no universally "best" way to construct a stage structured model
-#' based on mean stage durations. This function implements four approaches, with names
-#' based on the scheme in Kendall et al. (in review).
+#' @details There is no universally "best" way to construct a stage structured model based
+#'   on mean stage durations. This function implements four approaches, with names based
+#'   on the scheme in Kendall et al. (in review).
 #'
-#' \code{approx_method = "unrolled"}: this creates an age-structured Leslie matrix where stage i
-#' is replicated \code{duration[i]} times. This is a good solution if the variance in stage
-#' duration is small, and is the best solution if there is no variance in stage duration:
-#' it correctly generates both the transient and asymptotic dynamics. The cost is a
-#' potentially large matrix, which doesn't cause R any difficulty but may be challenging
-#' to visualize (future developments will provide tools to aggregate results by stage).
-#' This method requires that all elements of \code{duration} be integers.
+#'   \code{approx_method = "unrolled"}: this creates an age-structured Leslie matrix where
+#'   stage i is replicated \code{duration[i]} times. This is a good solution if the
+#'   variance in stage duration is small, and is the best solution if there is no variance
+#'   in stage duration: it correctly generates both the transient and asymptotic dynamics.
+#'   The cost is a potentially large matrix, which doesn't cause R any difficulty but may
+#'   be challenging to visualize (future developments will provide tools to aggregate
+#'   results by stage). This method requires that all elements of \code{duration} be
+#'   integers.
 #'
-#' \code{approx_method = "SAS"}: this creates a stage-structured Lefkovitch model where
-#' the fraction of individual maturing out of stage i is given by the formula in Crouse
-#' et al. (1987). This reproduces the mean stage durations that would be observed if one
-#' is following a cohort through time, and hence is probably the best stage-based solution
-#' for calculating quantities such as R0, mean age at maturity, or some definitions of
-#' generation time. However, unless lambda = 1, this model will not give the correct
-#' mean stage duration under asymptotic conditions. As with AAS and FAS, the variance
-#' of the stage durations cannot be set, being equal to the means.
+#'   \code{approx_method = "SAS"} ("stable age structure"): this creates a
+#'   stage-structured Lefkovitch model where the fraction of individual maturing out of
+#'   stage i is given by the formula in Crouse et al. (1987). This reproduces the mean
+#'   stage durations that would be observed if one is following a cohort through time, and
+#'   hence is probably the best stage-based solution for calculating quantities such as
+#'   R0, mean age at maturity, or some definitions of generation time. However, unless
+#'   lambda = 1, this model will not give the correct mean stage duration under asymptotic
+#'   conditions. As with AAS and FAS, the variance of the stage durations cannot be set,
+#'   being equal to the means.
 #'
-#'
-#' \code{approx_method = "FAS"}: this creates a stage-structured Lefkovitch model where
-#' the fraction of individual maturing out of stage i is \code{1/duration[i]}. This is
-#' not likely to ever be a good solution, as the mean stage duration will only be matched
-#' under very special conditions and the stage duration variance is uncontrolled (it is
-#' equal to the mean). However, it is the first solution proposed by Caswell and, being
-#' easy to calculate by hand, is popular in the literature.
+#'   \code{approx_method = "FAS"} ("flat age structure"): this creates a stage-structured
+#'   Lefkovitch model where the fraction of individual maturing out of stage i is
+#'   \code{1/duration[i]}. This is not likely to ever be a good solution, as the mean
+#'   stage duration will only be matched under very special conditions and the stage
+#'   duration variance is uncontrolled (it is equal to the mean). However, it is the first
+#'   solution proposed by Caswell (2001) and, being easy to calculate by hand, is popular
+#'   in the literature.
 #'
 #' @return A projection matrix. For the "unrolled" case the row and column names are a
-#' concatenation of the stage name and the age; for the others they are the stage names.
+#'   concatenation of the stage name and the age; for the others they are the stage names.
+#'
+#' @references Caswell, H. 2001. Matrix population models: Construction, analysis, and
+#' interpretation. Sinauer Associates, Sunderland, MA.
+#'
+#' Crouse, D. T., L. B. Crowder, and H. Caswell. 1987. A stage-based population model for
+#' loggerhead sea turtles and implications for conservation. Ecology 68:1412-1423.
+#'
+#' Crowder, L. B., D. T. Crouse, S. S. Heppell, and T. H. Martin. 1994. Predicting the
+#' impact of turtle excluder devices on loggerhead sea turtle populations. Ecological
+#' Applications 4:437-445.
+#'
+#' Kendall, B.E., M. Fujiwara, J. Diaz-Lopez, S. Schneider, J. Voigt, and S. Wiesner. In
+#' review. Persistent problems in the construction of matrix population models. Ecological
+#' Modelling.
+#'
 #' @export
 #'
 #' @examples
