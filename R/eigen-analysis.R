@@ -17,3 +17,17 @@
 lambda1 <- function(A) {
   Re(eigen(A, symmetric = FALSE, only.values = TRUE)$values[1])
 }
+
+stable_stage <- function(A, collapse = FALSE, stages = NULL) {
+  w1 <- Re(eigen(A, symmetric = FALSE)$vector)[, 1]
+  if(collapse) {
+    if (! is.null(stages)){
+      stage_names <- stages
+    } else {
+      stage_names <- unlist(strsplit(rownames(A), "[:0-9:]"))
+      stage_names <- stage_names[stage_names != ""]
+      stage_names <- unique(stage_names)
+    }
+    # Aggregate somhow. Maybe using something like by(w1, stage_names, sum) [with the second version of stage_names]
+  }
+}
