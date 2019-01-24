@@ -1,0 +1,188 @@
+---
+title: "Rationale and Roadmap"
+author: "Bruce E. Kendall"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+bibliography: [Bibliography.bib, Bibliography2.bib]
+vignette: >
+  %\VignetteIndexEntry{Rationale and Roadmap}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Why do we need a new package for "Building and Analyzing Matrix Population Models?" 
+After all, R is built on matrix manipulation, and a number of packages exist that support ecological population modeling, including matrix population models (see next section).
+
+However, a matrix *population* model is not just a matrix: it synthesizes information about age-, stage-, and/or size-dependent demography, development (growth), and movement; may be time-varying, and may contain rates that are density- or frequency-dependent. 
+The existing tools for constructing and analyzing such models either require that the user do this synthesizing themselves or put strong constraints on the structure of the model. 
+In a recent review of the literature on published matrix population models (MPMs), many constructed by non-modelers (i.e., the field biologists who studied the population), I and my co-authors found that a large fraction of MPMs were constructed incorrectly [@Kendall2019ir]. 
+This is probably due in part to the fact that most textbook descriptions of MPM construction are incomplete, inaccessible to non-modelers, and/or incoherent. 
+Furthermore, some of the steps involved in converting biological parameters into matrix elements require actions that are, at first encounter, biologically counter-intuitive.
+These sticking points are not deep biological insights, but rather just accounting issues.
+Thus, the first objective of **mpmtools** is to help biologists construct MPMs from underlying estimates of demographic and development rates without needing to engage with the troubling accounting issues.
+
+In addition, the standard ways of setting up MPMs is problematic in many cases.
+For example, in a long-lived animal species, a fully age-structured MPM with many dozens of age classes is cumbersome, prone to data-entry errors, and difficult to extract meaningful biological insight from.
+Thus, many biologists gravitate towards stage-structured models with a small number of biologically meaningful stage classes (juvenile, adult, etc.).
+While it is possible (although not trivial) to construct a stage-structured model that matches the *asymptotic* properties of the age-structured population being approximated, the stage-structured model will do a poor job of approximating other quantities of interest, such as transient dynamics or life-history parameters.
+A powerful solution is to construct MPMs that account for *both* age and stage (especially if there is heterogeneity in development rates); but this requires even more attention to accounting details than the standard models, and requires active programming skills to construct and analyze.
+Thus, the second objective of **mpmtools** is to help biologists construct and analyze MPMs that simultaneously account for, and report results in relation to, broad stage classes in addition to age, or broad size classes in addition to continuous size.
+
+Finally, there are a vast number of biologically useful analyses one can do with an MPM (e.g., see Caswell 2001 and his many subsequent publications).
+However, most MPM analyses of actual populations (as opposed to methods or theory papers) only look at the asymptotic growth rate ($\lambda$) and its sensitivity to parameters, or in some cases at stochastic simulations to estimate extinction risk.
+Implementing the "nonstandard" analyses requires not only a conceptual understanding but also the ability to write (often complex) computer code.
+Many of these analyses could become standard if the programming hurdle were overcome, just as software implementations of generalized linear models (such as `glm()`) have allowed ecologists to perform statistical analyses that better match the structure of their data.
+Thus, the final objective of **mpmtools** is to help biologists learn more about their populations by making advanced analyses more accessible.
+
+## Related packages and software
+Base R
+  ~ Base R includes functions for creating matrices (`matrix()`) and performing eigenvalue/vector analysis (`eigen()`).
+    It also has various matrix product operators, including the inner product (aka "matrix multiplication;" `%*%`), the Hadamard product (entry-wise multiplication; `*`), and the outer product (`%o%`).
+    These form the basis for the analysis of MPMs, but do not provide any explicitly ecological tools.
+
+### Packages and software for ecological population modeling    
+**popbio**: Construction and Analysis of Matrix Population Models
+  ~ **popbio** [@Stubben2007] provides an R implementation of the Matlab routines from @Caswell2001 and @Morris2002a.
+    It does not, in general, provide code for other analyses in @Caswell2001 that did not come with Matlab code.
+    The only extensions are some plotting functions and `vitalsens()`, a function to calculate the sensitivity and elasticity of $\lambda$ to the underlying demographic parameters.
+    For the latter, the user needs to provide a symbolic representation of the MPM, together with parameter values.
+    The package is actively maintained with bug fixes and updates to keep up with changes in base R and other dependencies, but no new functionality has been added since 2011.
+    The underlying code is variable in the extent to which it makes use of R's efficiencies, and in the amount of input checking.
+
+popdemo: Demographic Modelling Using Projection Matrices
+  ~ **popdemo** [@Stott2018r] provides functions for projecting MPMs and analyzing $\lambda$.
+    In addition, it provides a variety of functions related to transient dynamics and perturbation analysis.
+    The package has routines for testing matrix primitivity etc., and uses an S4 class for population projections that stores the matrices, population vectors, and a number of statistics.
+    The package is under reasonably active development, although the most recent addition is the projection features, which arguably are least innovative (in purpose, if not in implementation).
+
+primer: Functions and data for "A Primer of Ecology with R"
+  ~ This package accompanies a book [@Stevens2009] that covers a wide range of introductory topics in ecological modeling. MPMs are covered in chapter 2; the one function provided for this chapter calculates all the quantities that can be extracted from the eigenanalysis. Note that the example shown in the book for parameterizing a model from data fails to include a survival in the reproduction transtions.
+  
+IPMpack: Construction and analysis of integral projection models
+  ~ **IPMpack** [@Metcalf2014r] implements *integral projection models*, in which an individual's state is conceptually a continuous variable but is implemented as a high-dimensional MPM.
+    The package is focused on getting from raw data to analysis results (indeed, it is quite challenging to use the package to build a model with predetermined parameter values).
+    It contains an innovative S4 class for doing this.
+    Unfortunately, development has stopped, and it is not clear that there is even active bug support.
+    The package does not support some common types of life histories, such as monocarpic perennials, and has not kept up with the state of the art in model structure and analysis as described in @Ellner2016a (but note that the latter's programming is *not* state of the art).
+
+pop: A Flexible Syntax for Population Dynamic Modelling
+  ~ **pop** [@Golding2016] is an intriguing attempt to create a common interface framework for a wide range of population models, including MPMs.
+    For MPMs, it appears that users still need to fully understand what should go into each transition element, which is one of the challenges we identified in @Kendall2019ir.
+    Furthermore, development appears to have ceased at version 0.1 (which incoporporates simple MPMs and discrete patches of habitat) in 2016.
+
+Rramas: Matrix Population Models
+  ~ **Rramas** [@delaCruzRot2017r] projects MPMs with environmental and demographic stochasticity. It is meant to reproduce the simulation functionality of the commercial program Ramas, but does not appear to have any connection to that program.
+
+population: Models for Simulating Populations
+  ~ **population** [@Chapron2018r] appears to be a generalization of **pop.wolf**. It provides a function to simulate a density-independent age-structured MPM with environmental stochasticity.
+
+PVA: Population viability analysis in R
+  ~ **PVA** [@Kendall_PVA2018r] contains tools for simulating and analyzing simple population models, with a focus on demonstrations for teaching purposes. It does include functions for working with MPMs, representing my early attempts to address some of the issues that **mpmtools** is aimed at. These will probably be removed once **mpmtools** is mature.
+
+Vortex: Population Viability Analysis software
+  ~ Vortex (http://www.vortex10.org) is a free (but not open-source) standalone program to perform population viability analysis on age-structured models. The user only needs to input fertility and survival rates, and doesn't need to know how to combine them. The program focuses on stochastic simulation, but it is possible to extract the underlying deterministic matrix and some of its properties. However, in its standard form the model is rather inflexible: all individuals of a given sex reach reproductive maturity at the same age, and thereafter have unchanging demography. It is possible to build more complex life history models using functions, but this will be beyond the capacity of most non-modelers.
+
+### Packages for parameter estimation
+lmf: Functions for estimation and inference of selection in age-structured populations
+  ~ **lmf** [@Kvalnes2013] estimates directional and fluctuating selection in age-structured populations and provides methods for statistical inference using the procedures developed by Engen et al. 2012. 
+
+poptrend: Analyze population trends from survey count data
+  ~ **poptrend** provides code to accompany @Knape2016, who analyzed trends in Swedish bird populations using count data. 
+
+### Packages for human population analysis
+bayesPop: Probabilistic Population Projection
+  ~ **bayesPop** [@Sevcikova2016] produces stochastic projections of human populations in each country on Earth.
+
+demography: Forecasting mortality and fertility data
+  ~ Functions for demographic analysis including lifetable calculations, Lee-Carter modelling and functional data analysis of mortality rates.
+    **demography** [@Hyndman2017] is focused on human population projections. Some of the life table calculations may be useful in ecological analysis.
+
+POPdemog: Plot Population Demographic History
+  ~ Despite its intriguing title, **POPdemog** [@Zhou2017] actually provides visualizations of human population migration, based on coalescent analyses of genomes.
+
+LexisPlotR: Plot Lexis Diagrams for Demographic Purposes
+  ~ **LexisPlotR** [@Ottolinger2016r] provides (not surprisingly) functions to create and display a *Lexis diagram*, a two dimensional diagram that is used to represent events (such as births or deaths) that occur to individuals belonging to different cohorts. It is employed in human demography; I'm not sure how useful it is in populations with discrete breeding, as all individuals in a cohort will be overlaid.
+
+### Packages for other specialized populations
+
+albopictus: Age-Structured Population Dynamics Model
+  ~ **albopictus** [@Erguler2018r] iterates a cohort of individuals forward with a daily timestep, incorporating mortality and development, and allowing new cohorts to be added extrinsically. 
+    It accompanies a pair of papers on mosquito population dynamics.
+
+capm: Companion Animal Population Management
+  ~ **capm** [@SantosBaquero2015] provides functions for creating and analyzing a population model of companion animals (e.g., domestic dogs and cats).
+
+pop.wolf: Models for Simulating Wolf Populations
+  ~ **pop.wolf** [@Chapron2016] is an R interface to a C program that runs an individual-based simulation of wolf population dynamics. There is little documentation; my guess is that this was code for a scientific paper (although no such paper is cited in the package).
+
+
+## Roadmap
+Version 0.1 is very basic: It contains only two construction functions (construct a Leslie matrix from a demography schedule; convert a prebreeding census model to a postbreeding census model) and one analysis tool (calculate the asymptotic growth rate).
+A great deal more needs to be done to make this useful.
+
+### Accomodate the two commonest use cases of stage-structured animal MPMs
+Many animal populations modeled by stage-structured MPMs fall into one of two groups:
+
+1. Stage-structured populations where all individuals in each stage have the same demography, and the maturation from one stage to the next occurs at a fixed age.
+This is commonly used for long-lived mammals and reptilians [e.g., sea turtles; @Crowder1994]. 
+We call these "stage-for-age" models.
+
+2. Size-structured populations in which growth is approximately deterministic (e.g., via a von Bertalanffy function) and demography is size-dependent, and the analyst wants to collapse the size distribution into a small number of size/stage classes. 
+These are commonly used for long-lived fish [e.g., XXX].
+We call these "size-for-age" models; conceptually, they differ from stage-for-age models by having substantial demographic heterogeneity within each size class.
+
+There are two general approaches for dealing with such populations:
+
+1. Construct stage-structured MPMs that approximate as closely as possible the full age-structured MPM [@Crowder1994; @Caswell2001; @Fujiwara2017].
+
+2. Construct the full age-structured MPM, and then collapse the results of the analyis back into the smaller number of stages or size classes.
+
+Building functions to do this is the next priority of the project. 
+The second part will require creating the first iteration of an "mpm-class" that tracks stage/size class along with age. 
+It will also require some research on how to aggregate the reproductive value, as I don't think we got it right in our paper.
+
+### Accomodate multi-sex models
+Functions to create and manipulate models that explicitly track males and females.
+This includes a frequency-dependent mating function.
+Also allow newborns to transition into multiple classes.
+This is also the place to add clonal reproduction and fission.
+
+### Use periodic models to accomodate more flexible descriptions of life history
+In many cases, it may be desireable to incorporate seasonal variation in demography as well as to separate mating from birth.
+This can be done by letting the user specify individual transition events (including some, such as births, that don't have a duration), and using the theory of periodic models to assemble them into annual models.
+While the end result is a single matrix, indicating that, in principle, the matrix elements could be calculated directly, this approach will probably be easier for the user to apply accurately.
+
+Furthermore, this is probably the way to flexibly incorporate analysis in terms of underlying parameters, as even a standard model can be written as a product of matrices reflecting births, survival, and stage transitions.
+At this point we will include a full set of asymptotic analysis functions.
+
+### Provide a link to IPMs
+The goal here is to allow the analysis of integral projection models (e.g., from **IPMpack**) to be summarized by size classes.
+Also consider other ways in which continuous state variables might be included (i.e., creating our own IPM constructor function).
+
+### Stochastic MPMs
+Extend the mpm-class to incorporate the information needed to represent environmental stochasticity (multiple observed matrices, temporal parameter covariances) and demographic stochasticity (distributional forms, variance parameters).
+Also write functions to project and analyze these models (e.g., sensitivity analysis of stochastic growth rate).
+
+### Density dependence
+I don't yet have a clear view for what to do with density dependence.
+But it seems likely that many empirical modelers would incorporate this if they could.
+The periodic breakdown of population processes may be particularly powerful here.
+
+### Other analyses
+Catalog and prioritize the nonstandard analyses from Caswell and elsewhere.
+Investigate the vec-permutation formalism for compactly representing more complex models.
+
+### Parameter estimation
+For now, parameter estimation is not a high priority to me, other than correctly estimating stage transition rates.
+It appears that estimation of (st)age-specific demographic rates is not a limiting step (although I may be wrong).
+However, there are some deep conceptual issues around estimating the mean and variance of maturation times when individuals don't all have identical stage durations.
+In addition, there would be value in developing ways to bring standard errors and covariances of parameter estimates into the models, in order to propogate those uncertainties to the analytical outputs.
+
+## References
