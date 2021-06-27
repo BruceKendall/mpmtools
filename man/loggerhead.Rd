@@ -4,7 +4,9 @@
 \name{loggerhead}
 \alias{loggerhead}
 \title{Loggerhead sea turtle stage-based life tables}
-\format{A list with two elements, each being a data frame with four named columns.}
+\format{
+A list with two elements, each being a data frame with four named columns.
+}
 \source{
 \code{loggerhead[[1]]} is derived from Table 3 of Crouse et al. (1987), and
 \code{loggerhead[[2]]} is Table 1 of Crowder et al. (1994).
