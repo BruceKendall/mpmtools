@@ -4,3 +4,5 @@
 ^README\.Rmd$
 ^README-.*\.png$
 ^developers_notes\.md$
+^doc$
+^Meta$

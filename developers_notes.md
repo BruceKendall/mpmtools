@@ -8,3 +8,6 @@ In general, this package is written according to the style recommended in Hadley
     - https://jeffkreeftmeijer.com/git-flow/
     - https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow
 - We use the auto-generated citation (at least until a publication is written about it). This requires manually updating the "Date/Publication" field in DESCRIPTION, which is a pain!
+
+## Handy reminders
+- To install vignettes (to see how they look in the help system) use `install(build_vignettes = TRUE)`

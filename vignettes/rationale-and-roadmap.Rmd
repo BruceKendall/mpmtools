@@ -7,7 +7,7 @@ bibliography: [Bibliography.bib, Bibliography2.bib]
 vignette: >
   %\VignetteIndexEntry{Rationale and Roadmap}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+  \usepackage[utf8]{inputenc}
 ---
 
 ```{r setup, include = FALSE}
