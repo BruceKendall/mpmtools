@@ -4,9 +4,13 @@
 \alias{make_Lefkovitch_matrix}
 \title{Create a Lefkovitch stage-structured matrix}
 \usage{
-make_Lefkovitch_matrix(stage_table, survival = stage_table$survival,
+make_Lefkovitch_matrix(
+  stage_table,
+  survival = stage_table$survival,
   maternity = stage_table$maternity,
-  maturation = stage_table$maturation, model = c("post", "pre"))
+  maturation = stage_table$maturation,
+  model = c("post", "pre")
+)
 }
 \arguments{
 \item{stage_table}{Either a vector of stage names or a data frame with columns

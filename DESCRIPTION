@@ -17,7 +17,7 @@ Encoding: UTF-8
 URL: https://github.com/BruceKendall/mpmtools
 BugReports: https://github.com/BruceKendall/mpmtools/issues
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
 Suggests: 
     testthat,

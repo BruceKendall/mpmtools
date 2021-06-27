@@ -4,7 +4,9 @@
 \name{Caswell_Ex_2.1}
 \alias{Caswell_Ex_2.1}
 \title{Example 2.1 from Caswell (2001)}
-\format{A matrix with 3 rows and 3 columns}
+\format{
+A matrix with 3 rows and 3 columns
+}
 \source{
 Caswell, H. 2001. Matrix population models: Construction, analysis, and
 interpretation. 2nd edition. Sinauer Associates, Sunderland, MA.

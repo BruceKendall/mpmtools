@@ -4,10 +4,15 @@
 \alias{make_stage4age_matrix}
 \title{Construct a stage-structured matrix with given mean stage durations}
 \usage{
-make_stage4age_matrix(stage_table, survival = stage_table$survival,
-  maternity = stage_table$maternity, duration = stage_table$duration,
-  approx_method = c("unrolled", "AAS", "SAS", "FAS"), model = c("post",
-  "pre"), tol = 10^(-6))
+make_stage4age_matrix(
+  stage_table,
+  survival = stage_table$survival,
+  maternity = stage_table$maternity,
+  duration = stage_table$duration,
+  approx_method = c("unrolled", "AAS", "SAS", "FAS"),
+  model = c("post", "pre"),
+  tol = 10^(-6)
+)
 }
 \arguments{
 \item{stage_table}{Either a vector of stage names or a data frame with columns
