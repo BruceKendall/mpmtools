@@ -206,19 +206,27 @@ mpm <- function(demog_info, matrix_type,
   }
   stopifnot(all(newborn_classes %in% class_names))
 
+  # Allow lifetable notation
+  if ("mx" %in% names(demog_info) & !("births" %in% names(demog_info))) {
+    names(demog_info)[names(demog_info) == "mx"] <- "births"
+  }
+  if ("Px" %in% names(demog_info) & !("survival" %in% names(demog_info))) {
+    names(demog_info)[names(demog_info) == "Px"] <- "survival"
+  }
+
   # Type-specific requirements
   if (matrix_type == "Leslie") {
     stopifnot(exprs = {
-      length(demog_info$mx) == length(class_names)
-      length(demog_info$Px) == length(class_names)
+      length(demog_info$births) == length(class_names)
+      length(demog_info$survival) == length(class_names)
       length(newborn_classes) == 1
     })
   }
 
   # Construct demog
   if (matrix_type == "Leslie") {
-    demog <- list(births = demog_info$mx,
-                  survival = demog_info$Px)
+    demog <- list(births = demog_info$births,
+                  survival = demog_info$survival)
   } else {
     stop("Matrix type ", matrix_type, "not implemented!")
   }
