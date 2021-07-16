@@ -271,3 +271,23 @@ Amat <- function(x, census = attr(x, "census")) {
   }
   A
 }
+
+#' @export
+print.mpm <- function(x, census = attr(x, "census"), digits = 3L, ...) {
+  # Expand census
+  if (!is.na(pmatch(census, c("postbreeding", "prebreeding")))) {
+    census <- match.arg(census, c("postbreeding", "prebreeding"))
+  }
+
+  # Print metadata
+  cat("\n", iart(attr(x, "class_type"), TRUE), "-structured ",
+      attr(x, "matrix_type"), " matrix population model\n", sep = "")
+  cat("    with ", iart(census), " census and ", iart(attr(x, "timestep")),
+      " time step:\n\n", sep = "")
+
+  # Make and print a pretty version of the A matrix
+  A <- Amat(x, census)
+  A <- matrix(as.character(round(A, digits)), nrow(A), dimnames = dimnames(A))
+  print(A, quote = FALSE)
+  invisible(x)
+}
