@@ -235,3 +235,39 @@ mpm <- function(demog_info, matrix_type,
   new_mpm(demog, timestep, matrix_type, class_type, class_names,
           newborn_classes, census)
 }
+
+#' Extract a projection matrix from an `mpm` object
+#'
+#' `Amat` extracts the projection matrix (often called the "A matrix") from a
+#' matrix population model (`mpm`) object. By default, the census coded into the
+#' mpm object is used, but this can be overridden by specifying a value for
+#' `census`.
+#'
+#' @param x An `mpm` object.
+#' @param census A string specifying the census to use. Defaults to the value
+#'   encoded in `x`.
+#'
+#' @return A projection matrix, which is a matrix object with row and column
+#'   names.
+#' @export
+#'
+#' @examples
+#' # Make a Leslie matrix model with postbreeding census
+#' bx <- c(0, 0.040, 1.470, 2.065, 2.440, 3.250, 3.250, 3.250)     # Births
+#' px <- c(0.424, 0.726, 0.513, 0.361, 0.175, 0.700, 0.286, 0)     # Survival
+#' my_lifetable <- data.frame(age = 0:7, mx = bx, Px = px)
+#' my_mpm <- mpm(my_lifetable, "Leslie")
+#'
+#' # Extract the projection matrices
+#' Amat(my_mpm)            # Postbreeding census
+#' Amat(my_mpm, "pre")     # Prebreeding census
+Amat <- function(x, census = attr(x, "census")) {
+  if (!is.na(pmatch(census, "prebreeding"))) {
+    A <- x$Apre
+  } else if (!is.na(pmatch(census, "postbreeding"))) {
+    A <- x$Apost
+  } else {
+    stop("No method implemented for census type ", census)
+  }
+  A
+}
