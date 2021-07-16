@@ -87,3 +87,17 @@ dropzeros <- function(A) {
   zerorows <- rowSums(A) == 0
   A[!zerorows, !zerorows]
 }
+
+# Select appropriate indefinite article based on whether the next word starts
+# with a vowel. Only the most basic rules.
+# cap specifies whether the article should be capitalized.
+iart <- function(nextword, cap = FALSE) {
+  vowels <- c("a", "e", "i", "o", "u", "A", "E", "I", "O", "U")
+  nextvowel <- strsplit(nextword, NULL)[[1]][1] %in% vowels
+  if (cap) {
+    res <- ifelse(nextvowel, paste("An", nextword), paste("A", nextword))
+  } else {
+    res <- ifelse(nextvowel, paste("an", nextword), paste("a", nextword))
+  }
+  res
+}
