@@ -103,6 +103,15 @@ to \eqn{m_x} in a life table) and \code{survival} (a vector of age specific
 survival rates, equivalent to \eqn{P_x} in a life table; if the last element
 is non-zero, then the last age-class will include a self-loop).}
 
+\item{\code{matrix_type = "Lefkovitch"}}{Creates a classic single-sex,
+stage-structured (Lefkovitch) model, in which individuals in stage x, if the
+survive, either stay in their stage (with probability 1 - g_x) or mature
+to the next stage (with probability g_x). The only required elements
+of \code{demog_info} are \code{births} (a vector of stage-specific birth rates,
+including zero for newborns); \code{survival} (a vector of stage specific survival
+rates); and \code{maturation} (a vector of stage-specific maturation rates; note that
+the last stage should have a maturation rate of zero).}
+
 }
 }
 
@@ -131,4 +140,12 @@ mpm(my_lifetable, "Leslie", census = "pre") # prebreeding-census model
 # Specify class names
 cnames <- c("newborn", as.character(1:7))
 mpm(my_lifetable, "Leslie", class_names = cnames)
+
+# Make a Lefkovitch stage structured model
+bx <- c(0, 0, 303)
+px <- c(0.92 * 0.03 * 0.55, 0.36, 0.69)
+gx <- c(1, 0.09/0.36, 0)
+my_lt <- data.frame(births = bx, survival = px, maturation = gx)
+mpm(my_lt, "Lefkovitch", class_type = "stage",
+    class_names = c("eggs", "juveniles", "adults"))
 }

@@ -29,6 +29,18 @@ new_mpm <- function(demog = list(births = numeric(),
     Pmat <- diag(demog$survival)
     Tmat <- subdiag(num_class, 1)
     if (demog$survival[num_class] != 0) Tmat[num_class, num_class] <- 1
+  } else if (matrix_type == "Lefkovitch") {
+    # Assumptions:
+    #   - `births` `survival`, and 'maturation`` are vectors with length equal to
+    #     the number of age classes
+    #   - The first age class is newborn
+    #   - maturation[i] is the probability of moving from class i to class i+1;
+    #     the remainder stay in the same class
+    Bmat <- diag(num_class)
+    Bmat[1, ] <- demog$births
+    Pmat <- diag(demog$survival)
+    Tmat <- diag(1 - demog$maturation)
+    Tmat <- subdiag(Tmat, demog$maturation[-num_class])
   } else {
     stop("Matrix type ", matrix_type, "not implemented!")
   }
@@ -93,6 +105,15 @@ new_mpm <- function(demog = list(births = numeric(),
 #' to \eqn{m_x} in a life table) and `survival` (a vector of age specific
 #' survival rates, equivalent to \eqn{P_x} in a life table; if the last element
 #' is non-zero, then the last age-class will include a self-loop).}
+#'
+#' \item{`matrix_type = "Lefkovitch"`}{Creates a classic single-sex,
+#' stage-structured (Lefkovitch) model, in which individuals in stage x, if the
+#' survive, either stay in their stage (with probability 1 - g_x) or mature
+#' to the next stage (with probability g_x). The only required elements
+#' of `demog_info` are `births` (a vector of stage-specific birth rates,
+#' including zero for newborns); `survival` (a vector of stage specific survival
+#' rates); and `maturation` (a vector of stage-specific maturation rates; note that
+#' the last stage should have a maturation rate of zero).}
 #'
 #' }
 #'
@@ -167,6 +188,14 @@ new_mpm <- function(demog = list(births = numeric(),
 #' # Specify class names
 #' cnames <- c("newborn", as.character(1:7))
 #' mpm(my_lifetable, "Leslie", class_names = cnames)
+#'
+#' # Make a Lefkovitch stage structured model
+#' bx <- c(0, 0, 303)
+#' px <- c(0.92 * 0.03 * 0.55, 0.36, 0.69)
+#' gx <- c(1, 0.09/0.36, 0)
+#' my_lt <- data.frame(births = bx, survival = px, maturation = gx)
+#' mpm(my_lt, "Lefkovitch", class_type = "stage",
+#'     class_names = c("eggs", "juveniles", "adults"))
 mpm <- function(demog_info, matrix_type,
                 census = "postbreeding",
                 timestep = "year",
@@ -180,8 +209,17 @@ mpm <- function(demog_info, matrix_type,
   if (!is.list(demog_info)) {
     stop("demog_info should be a data frame, tibble, or list")
   }
-  if (!all(c("mx", "Px") %in% names(demog_info))) {
-    stop("demog_info must contain elements mx and Px")
+
+  # Allow lifetable notation
+  if ("mx" %in% names(demog_info) & !("births" %in% names(demog_info))) {
+    names(demog_info)[names(demog_info) == "mx"] <- "births"
+  }
+  if ("Px" %in% names(demog_info) & !("survival" %in% names(demog_info))) {
+    names(demog_info)[names(demog_info) == "Px"] <- "survival"
+  }
+
+  if (!all(c("births", "survival") %in% names(demog_info))) {
+    stop("demog_info must contain elements births and survival")
   }
   # The following line should only apply to a standard birth-pulse model!
   census <- match.arg(census, c("prebreeding", "postbreeding"))
@@ -206,14 +244,6 @@ mpm <- function(demog_info, matrix_type,
   }
   stopifnot(all(newborn_classes %in% class_names))
 
-  # Allow lifetable notation
-  if ("mx" %in% names(demog_info) & !("births" %in% names(demog_info))) {
-    names(demog_info)[names(demog_info) == "mx"] <- "births"
-  }
-  if ("Px" %in% names(demog_info) & !("survival" %in% names(demog_info))) {
-    names(demog_info)[names(demog_info) == "Px"] <- "survival"
-  }
-
   # Type-specific requirements
   if (matrix_type == "Leslie") {
     stopifnot(exprs = {
@@ -221,12 +251,24 @@ mpm <- function(demog_info, matrix_type,
       length(demog_info$survival) == length(class_names)
       length(newborn_classes) == 1
     })
+  } else   if (matrix_type == "Lefkovitch") {
+    stopifnot(exprs = {
+      length(demog_info$births) == length(class_names)
+      length(demog_info$survival) == length(class_names)
+      length(demog_info$maturation) == length(class_names)
+      length(newborn_classes) == 1
+    })
   }
+
 
   # Construct demog
   if (matrix_type == "Leslie") {
     demog <- list(births = demog_info$births,
                   survival = demog_info$survival)
+  } else if (matrix_type == "Lefkovitch") {
+    demog <- list(births = demog_info$births,
+                  survival = demog_info$survival,
+                  maturation = demog_info$maturation)
   } else {
     stop("Matrix type ", matrix_type, "not implemented!")
   }
