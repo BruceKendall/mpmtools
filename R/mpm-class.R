@@ -16,6 +16,7 @@ new_mpm <- function(demog = list(births = numeric(),
   # stopifnot(newborn_classes %in% class_names)
 
   num_class <- length(demog$survival)
+  nb_idx <- match(newborn_classes, class_names)
 
   if (matrix_type == "Leslie") {
     # Assumptions:
@@ -41,6 +42,21 @@ new_mpm <- function(demog = list(births = numeric(),
     Pmat <- diag(demog$survival)
     Tmat <- diag(1 - demog$maturation)
     Tmat <- subdiag(Tmat, demog$maturation[-num_class])
+  } else if (matrix_type == "general") {
+    # Assumptions:
+    #   - `births` `survival`, and 'maturation`` are vectors with length equal to
+    #     the number of age classes
+    #   - The first age class is newborn
+    #   - maturation[i] is the probability of moving from class i to class i+1;
+    #     the remainder stay in the same class
+    Bmat <- diag(num_class)
+    if (is.vector(demog$births)) {
+      Bmat[nb_idx, ] <- demog$births
+    } else {
+      Bmat[nb_idx, ] <- t(demog$births)
+    }
+    Pmat <- diag(demog$survival)
+    Tmat <- demog$transitions
   } else {
     stop("Matrix type ", matrix_type, "not implemented!")
   }
@@ -260,6 +276,14 @@ mpm <- function(demog_info, matrix_type,
       length(newborn_classes) == 1
       newborn_classes == class_names[1]
     })
+  } else if (matrix_type == "general") {
+    stopifnot(exprs = {
+      length(demog_info$births) == length(class_names)
+      length(demog_info$survival) == length(class_names)
+      is.matrix(demog_info$transitions)
+      nrow(demog_info$transitions) == ncol(demog_info$transitions)
+      all(colSums(demog_info$transitions) == 1)
+    })
   }
 
 
@@ -271,6 +295,10 @@ mpm <- function(demog_info, matrix_type,
     demog <- list(births = demog_info$births,
                   survival = demog_info$survival,
                   maturation = demog_info$maturation)
+  } else if (matrix_type == "general") {
+    demog <- list(births = demog_info$births,
+                  survival = demog_info$survival,
+                  transitions = demog_info$transitions)
   } else {
     stop("Matrix type ", matrix_type, "not implemented!")
   }
