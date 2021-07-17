@@ -250,6 +250,7 @@ mpm <- function(demog_info, matrix_type,
       length(demog_info$births) == length(class_names)
       length(demog_info$survival) == length(class_names)
       length(newborn_classes) == 1
+      newborn_classes == class_names[1]
     })
   } else   if (matrix_type == "Lefkovitch") {
     stopifnot(exprs = {
@@ -257,6 +258,7 @@ mpm <- function(demog_info, matrix_type,
       length(demog_info$survival) == length(class_names)
       length(demog_info$maturation) == length(class_names)
       length(newborn_classes) == 1
+      newborn_classes == class_names[1]
     })
   }
 
