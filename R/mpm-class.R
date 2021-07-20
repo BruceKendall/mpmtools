@@ -273,11 +273,13 @@ mpm <- function(demog_info, matrix_type,
     } else {
       class_names <- paste(class_type, demog_info[[class_type]], sep = "_")
     }
-    cat("`class_names` not specified, setting them to", class_names, "\n")
+    cat("`class_names` not specified, setting them to",
+        stringr::str_c(class_names, collapse = ", "), "\n")
   }
   if (length(newborn_classes) == 0) {
     newborn_classes <- class_names[1]
-    cat("`newborn_classes` not specified, setting it to", newborn_classes, "\n")
+    cat("`newborn_classes` not specified, setting it to",
+        stringr::str_c(newborn_classes, collapse = ", "), "\n")
   }
   stopifnot(all(newborn_classes %in% class_names))
 
