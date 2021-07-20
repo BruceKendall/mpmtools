@@ -6,7 +6,11 @@
 #' Calculates lambda_1, the dominant eigenvalue of a matrix, which can be interpreted as
 #' the asmyptotic population growth rate of a matrix population model.
 #'
-#' @param A A square matrix
+#' @param A Either an mpm object or a square matrix representing a matrix
+#'   population model
+#' @param census A string giving the census to use when extracting the
+#'   projection matrix from A (if it's an mpm object). If not specified, the
+#'   default census coded into A is used. Value is ignored if A is a matrix.
 #'
 #' @return The dominant eigenvalue of `A`, which is the asymptotic growth rate of the
 #'   deterministic MPM represented by A.
@@ -14,7 +18,8 @@
 #'
 #' @examples
 #' lambda1(Caswell_Ex_2.1)
-lambda1 <- function(A) {
+lambda1 <- function(A, census = NULL) {
+  A <- mpm2A(A, census)
   Re(eigen(A, symmetric = FALSE, only.values = TRUE)$values[1])
 }
 
@@ -25,12 +30,16 @@ lambda1 <- function(A) {
 #' vector is scaled to sum to one. Allows stage-for-age Leslie matrices to be
 #' reported by stage for ease of visualization.
 #'
-#' @param A Square matrix representing a matrix population model
+#' @param A Either an mpm object or a square matrix representing a matrix
+#'   population model
 #' @param collapse Should classes in the matrix be collapsed into a smaller
 #'   number of stage classes?
 #' @param stages A vector with length equal to the rank of A giving the stage
 #'   name for each matrix class. If A is a Leslie matrix created using
 #'   \code{make_stage4age_matrix}, then this can be left unspecified.
+#' @param census A string giving the census to use when extracting the
+#'   projection matrix from A (if it's an mpm object). If not specified, the
+#'   default census coded into A is used. Value is ignored if A is a matrix.
 #'
 #' @return A vector of the stable stage distribution
 #' @export
@@ -44,7 +53,8 @@ lambda1 <- function(A) {
 #' A2 <- make_stage4age_matrix(loggerhead[[2]])
 #' stable_stage(A2) # Age structure
 #' stable_stage(A2, collapse = TRUE) # Stage structure
-stable_stage <- function(A, collapse = FALSE, stages = NULL) {
+stable_stage <- function(A, collapse = FALSE, stages = NULL, census = NULL) {
+  A <- mpm2A(A, census)
   w1 <- Re(eigen(A, symmetric = FALSE)$vector)[, 1]
   w1 <- w1 / sum(w1)
   names(w1) <- rownames(A)

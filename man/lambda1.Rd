@@ -4,10 +4,15 @@
 \alias{lambda1}
 \title{Asymptotic growth rate of an MPM.}
 \usage{
-lambda1(A)
+lambda1(A, census = NULL)
 }
 \arguments{
-\item{A}{A square matrix}
+\item{A}{Either an mpm object or a square matrix representing a matrix
+population model}
+
+\item{census}{A string giving the census to use when extracting the
+projection matrix from A (if it's an mpm object). If not specified, the
+default census coded into A is used. Value is ignored if A is a matrix.}
 }
 \value{
 The dominant eigenvalue of \code{A}, which is the asymptotic growth rate of the

@@ -4,10 +4,11 @@
 \alias{stable_stage}
 \title{Stable stage distribution of an MPM}
 \usage{
-stable_stage(A, collapse = FALSE, stages = NULL)
+stable_stage(A, collapse = FALSE, stages = NULL, census = NULL)
 }
 \arguments{
-\item{A}{Square matrix representing a matrix population model}
+\item{A}{Either an mpm object or a square matrix representing a matrix
+population model}
 
 \item{collapse}{Should classes in the matrix be collapsed into a smaller
 number of stage classes?}
@@ -15,6 +16,10 @@ number of stage classes?}
 \item{stages}{A vector with length equal to the rank of A giving the stage
 name for each matrix class. If A is a Leslie matrix created using
 \code{make_stage4age_matrix}, then this can be left unspecified.}
+
+\item{census}{A string giving the census to use when extracting the
+projection matrix from A (if it's an mpm object). If not specified, the
+default census coded into A is used. Value is ignored if A is a matrix.}
 }
 \value{
 A vector of the stable stage distribution
