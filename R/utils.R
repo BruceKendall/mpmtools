@@ -109,3 +109,17 @@ all_zero_one <- function(x, y = c(0, 1),
   vec <- sort(c(y - tolerance, y + tolerance))
   all((findInterval(x, vec) %% 2) == 1)
 }
+
+# Extract the A matrix from an mpm object
+# Useful in functions that can receive either a matrix or an mpm object, as
+# non-mpm objects are returned unchanged.
+# Such functions need a default `census = NULL` parameter
+mpm2A <- function(A, census) {
+  if (inherits(A, "mpm")) {
+    if (is.null(census)) {
+      census <- attr(A, "census")
+    }
+    A <- Amat(A, census)
+  }
+  A
+}
