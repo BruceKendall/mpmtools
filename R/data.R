@@ -36,3 +36,29 @@
 #'   impact of turtle excluder devices on loggerhead sea turtle populations. Ecological
 #'   Applications 4:437-445.
 "loggerhead"
+
+#' Teasel demography
+#'
+#' Reproduction, survival, and growth transitions for an experimental population
+#' of teasel (*Dipsacus sylvestris*). This is the "Field A" population of Werner
+#' & Caswell (1977). Note that the matrix in that paper is incorrect; Caswell
+#' (2001) gives the correct form for a prebreeding-census model.
+#'
+#' @format A list with two elements:
+#' \describe{
+#'   \item{demog}{A data frame with three columns: `stage`, `seed_production`,
+#'   and `survival`. These give the stage names, the stage-specific seed
+#'   production, and stage-specific survival, respectively.}
+#'   \item{transitions}{A 7x7 numeric matrix giving the transition
+#'   probabilitys (conditional upon survival) between stages.}
+#' }
+#'
+#' @source Werner & Caswell (1977), Table 3.
+#' @references Caswell, H. 2001. Matrix population models: Construction,
+#'   analysis, and interpretation. 2nd edition. Sinauer Associates, Sunderland,
+#'   MA.
+#'
+#'   Werner, P. A., and H. Caswell. 1977. Population growth rates and age versus
+#'   stage-distribution models for teasel (*Dipsacus sylvestris* Huds.). Ecology
+#'   58:1103-1111.
+"teasel"
