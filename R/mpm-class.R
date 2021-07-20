@@ -44,11 +44,12 @@ new_mpm <- function(demog = list(births = numeric(),
     Tmat <- subdiag(Tmat, demog$maturation[-num_class])
   } else if (matrix_type == "general") {
     # Assumptions:
-    #   - `births` `survival`, and 'maturation`` are vectors with length equal to
-    #     the number of age classes
-    #   - The first age class is newborn
-    #   - maturation[i] is the probability of moving from class i to class i+1;
-    #     the remainder stay in the same class
+    #   - `births` is either a vector with length equal to the number of classes
+    #     or a matrix wih num_class rows and length(newborn_classes) columns
+    #   - `survival` is a vector with length equal to the number of classes
+    #   - transitions[i, j] is the probability of moving from class j to
+    #     class i;
+    #     the columns of transitions sum to one or zero
     Bmat <- diag(num_class)
     if (is.vector(demog$births)) {
       Bmat[nb_idx, ] <- demog$births
@@ -131,6 +132,15 @@ new_mpm <- function(demog = list(births = numeric(),
 #' rates); and `maturation` (a vector of stage-specific maturation rates; note that
 #' the last stage should have a maturation rate of zero).}
 #'
+#' \item{`matrix_type = "general"`}{Creates a fully flexible structured model,
+#' in which surviving indviduals in a class might transition to any other class.
+#' Required elements of `demog_info` are: (1) `births` (class specific birth
+#' rates, expressed either as a vector [for a single newborn type] or an n x m
+#' matrix, where n is the number of classes and m is the number of newborn
+#' classes); (a vector of class specific survival rates); and `transitions` (an
+#' n x n matrix of transition probabilities, contingent on survival; each column
+#' must sum to 1 (or for terminal classes, zero)).}
+#'
 #' }
 #'
 #' ## Census
@@ -212,6 +222,17 @@ new_mpm <- function(demog = list(births = numeric(),
 #' my_lt <- data.frame(births = bx, survival = px, maturation = gx)
 #' mpm(my_lt, "Lefkovitch", class_type = "stage",
 #'     class_names = c("eggs", "juveniles", "adults"))
+#'
+#' # A general model of a teasel population (see help(teasel) for details)
+#' di_teasel <- with(teasel,
+#'                   list(stage = demog$stage,
+#'                   births = demog$seed_production,
+#'                   survival = demog$survival,
+#'                   transitions = transitions))
+#' mpm(di_teasel, "general")
+#' # The "corrected" model in Caswell (2001) Eq. 4.4 (the first printing has a
+#' #   couple of typos and roundoff errors):
+#' mpm(di_teasel, "general", census = "pre")
 mpm <- function(demog_info, matrix_type,
                 census = "postbreeding",
                 timestep = "year",

@@ -112,6 +112,15 @@ including zero for newborns); \code{survival} (a vector of stage specific surviv
 rates); and \code{maturation} (a vector of stage-specific maturation rates; note that
 the last stage should have a maturation rate of zero).}
 
+\item{\code{matrix_type = "general"}}{Creates a fully flexible structured model,
+in which surviving indviduals in a class might transition to any other class.
+Required elements of \code{demog_info} are: (1) \code{births} (class specific birth
+rates, expressed either as a vector \link{for a single newborn type} or an n x m
+matrix, where n is the number of classes and m is the number of newborn
+classes); (a vector of class specific survival rates); and \code{transitions} (an
+n x n matrix of transition probabilities, contingent on survival; each column
+must sum to 1 (or for terminal classes, zero)).}
+
 }
 }
 
@@ -148,4 +157,15 @@ gx <- c(1, 0.09/0.36, 0)
 my_lt <- data.frame(births = bx, survival = px, maturation = gx)
 mpm(my_lt, "Lefkovitch", class_type = "stage",
     class_names = c("eggs", "juveniles", "adults"))
+
+# A general model of a teasel population (see help(teasel) for details)
+di_teasel <- with(teasel,
+                  list(stage = demog$stage,
+                  births = demog$seed_production,
+                  survival = demog$survival,
+                  transitions = transitions))
+mpm(di_teasel, "general")
+# The "corrected" model in Caswell (2001) Eq. 4.4 (the first printing has a
+#   couple of typos and roundoff errors):
+mpm(di_teasel, "general", census = "pre")
 }
