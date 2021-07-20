@@ -282,7 +282,7 @@ mpm <- function(demog_info, matrix_type,
       length(demog_info$survival) == length(class_names)
       is.matrix(demog_info$transitions)
       nrow(demog_info$transitions) == ncol(demog_info$transitions)
-      all(colSums(demog_info$transitions) == 1)
+      all_zero_one(colSums(demog_info$transitions))
     })
   }
 

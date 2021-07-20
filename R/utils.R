@@ -101,3 +101,11 @@ iart <- function(nextword, cap = FALSE) {
   }
   res
 }
+
+# Test whether all values of a vector are nearly zero or one
+# Useful for checking column sums of transition matrices
+all_zero_one <- function(x, y = c(0, 1),
+                         tolerance = sqrt(.Machine$double.eps)) {
+  vec <- sort(c(y - tolerance, y + tolerance))
+  all((findInterval(x, vec) %% 2) == 1)
+}
