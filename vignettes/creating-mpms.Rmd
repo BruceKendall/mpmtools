@@ -1,0 +1,71 @@
+---
+title: "Creating matrix population models with **mpmtools**"
+author: "Bruce E. Kendall"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+bibliography: [Bibliography.bib, Bibliography2.bib]
+vignette: >
+  %\VignetteIndexEntry{creating-mpms}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+# Introduction
+Because of mismatches in the timescale of events in the life cycle (e.g., births are more-or-less instantaneous) and the timestep of the model (often a year), it can be challenging to go from demographic and life history information to an accurate representation of that biology in a matrix population model (MPM). 
+a matrix *population* model is not just a matrix: it synthesizes information about age-, stage-, and/or size-dependent demography, development (growth), and movement; may be time-varying, and may contain rates that are density- or frequency-dependent. 
+The existing tools for constructing and analyzing such models either require that the user do this synthesizing themselves or put strong constraints on the structure of the model. 
+
+In a recent review of the literature on published matrix population models (MPMs), many constructed by non-modelers (i.e., the field biologists who studied the population), I and my co-authors found that a large fraction of MPMs were constructed incorrectly [@Kendall2019]. 
+This is probably due in part to the fact that most textbook descriptions of MPM construction are incomplete, inaccessible to non-modelers, and/or incoherent. 
+Furthermore, some of the steps involved in converting biological parameters into matrix elements require actions that are, at first encounter, biologically counter-intuitive.
+These sticking points are not deep biological insights, but rather just accounting issues.
+
+Thus, a primary objective of **mpmtools** is to help biologists construct MPMs from underlying estimates of demographic and development rates without needing to engage with the troubling accounting issues.
+
+This document describes how to do so. 
+I recommend reading through in order, even if the model you want to create is described later in the document.
+But in case you do skip ahead, go ahead and load the package now:
+```{r setup}
+library(mpmtools)
+```
+
+A few general comments:
+
+- I will refer to the model timestep as a "year," as that is the most common value in published models and is easier to parse than "timestep." 
+If you have a different timestep (e.g., day, week, month, decade) substitute that where you see year, yearly, annual, etc.
+- At present, the package only supports so-called "birth-pulse" models, in which "newborn" offspring (seeds, eggs, neonates, etc.) are produced over a very short (relative to the model timestep) period. 
+This is conventionally called the "breeding season" in the MPM literature, and I will follow that convention here. 
+But note that in this context "breeding" means "appearance of offspring" rather than "mating" (which usually occurs a measurable time earlier, sometimes up to a year). 
+The rest of the year is referred to as the "nonbreeding season."
+- Individuals age, grow, and develop continuously throughout the year, resulting in a continuously changing population structure. 
+However, the MPM projects the population in discrete time intervals, from one year to the next. 
+Thus, we need to pick a moment in the year to virtually "census" the population.
+While the choice of census does not affect the model's dynamics (e.g., the asymptotic population growth rate), it does affect both how we see the population structure and the dimension and values of the projection matrix.
+**mpmtools** currently supports the two census choices most commonly used in birth-pulse MPMs:
+    - In the *prebreeding census*, we see the population moments before the onset of the breeding season.
+    Thus, the youngest individuals recorded in the population are (nearly) one year old.
+    - In the *postbreeding census*, we see the population immediately after the breeding season has completed. 
+    Thus, the youngest individuals recorded in the population are newborns (age zero).
+- A key assumption of standard birth-pulse MPMs (and that is not made explicit by many textbooks) is that there is no mortality between the prebreeding and postbreeding census---that is, the only thing that happens is that newborns appear.
+If the actual breeding season extends over a substantial fraction of the year, or if the offspring are fully dependent on their parents for a while after they are born, then this assumption will be problematic.
+Future versions of the package will provide a framework to address these issues.
+In the meantime, be careful to ensure that your survival estimates span a full year (from one "birthday" to the next).
+- The current version of this vignette is written for version 0.3 of the package, in which the `mpm` class was first introduced.
+
+# Build an age-structured (Leslie) matrix model
+This is the original MPM, introduced by @Leslie1945, in which birth and death rates depend only on age.
+Aging is automatic, so that if a one-year-old survives the year it becomes a two-year-old.
+
+Let's start with an example.
+[DESCRIBE EXAMPLE]
+
+
+# References
