@@ -42,14 +42,21 @@ A few general comments:
 - I will refer to the model timestep as a "year," as that is the most common value in published models and is easier to parse than "timestep." 
 If you have a different timestep (e.g., day, week, month, decade) substitute that where you see year, yearly, annual, etc.
 - At present, the package only supports so-called "birth-pulse" models, in which "newborn" offspring (seeds, eggs, neonates, etc.) are produced over a very short (relative to the model timestep) period. 
-This is conventionally called the "breeding season" in the MPM literature, and I will follow that convention here. 
-But note that in this context "breeding" means "appearance of offspring" rather than "mating" (which usually occurs a measurable time earlier, sometimes up to a year). 
-The rest of the year is referred to as the "nonbreeding season."
 - Individuals age, grow, and develop continuously throughout the year, resulting in a continuously changing population structure. 
 However, the MPM projects the population in discrete time intervals, from one year to the next. 
 Thus, we need to pick a moment in the year to virtually "census" the population.
 While the choice of census does not affect the model's dynamics (e.g., the asymptotic population growth rate), it does affect both how we see the population structure and the dimension and values of the projection matrix.
-**mpmtools** currently supports the two census choices most commonly used in birth-pulse MPMs:
+- The current version of this vignette is written for version 0.3 of the package, in which the `mpm` class was first introduced.
+
+# "Simple" models
+We start with deterministic, density-independent, single-sex, birth-pulse models. These models are described in many textbooks, and constitute a large fraction of published MPMs. However, despite their supposed "simplicity," errors in matrix construction are easy and common [@Kendall2019].
+
+Some general comments about these models:
+
+- The point in time where newbornds appear is conventionally called the "breeding season" in the MPM literature, and I will follow that convention here. 
+But note that in this context "breeding" means "appearance of offspring" rather than "mating" (which usually occurs a measurable time earlier, sometimes up to a year). 
+The rest of the year is referred to as the "nonbreeding season."
+- **mpmtools** currently supports the two census choices most commonly used in birth-pulse MPMs:
     - In the *prebreeding census*, we see the population moments before the onset of the breeding season.
     Thus, the youngest individuals recorded in the population are (nearly) one year old.
     - In the *postbreeding census*, we see the population immediately after the breeding season has completed. 
@@ -58,9 +65,9 @@ While the choice of census does not affect the model's dynamics (e.g., the asymp
 If the actual breeding season extends over a substantial fraction of the year, or if the offspring are fully dependent on their parents for a while after they are born, then this assumption will be problematic.
 Future versions of the package will provide a framework to address these issues.
 In the meantime, be careful to ensure that your survival estimates span a full year (from one "birthday" to the next).
-- The current version of this vignette is written for version 0.3 of the package, in which the `mpm` class was first introduced.
 
-# Build an age-structured (Leslie) matrix model
+
+## Build an age-structured (Leslie) matrix model
 This is the original MPM, introduced by @Leslie1945, in which birth and death rates depend only on age.
 Aging is automatic, so that if a one-year-old survives the year it becomes a two-year-old.
 
