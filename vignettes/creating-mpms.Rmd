@@ -74,8 +74,19 @@ In the meantime, be careful to ensure that your survival estimates span a full y
 This is the original MPM, introduced by @Leslie1945, in which birth and death rates depend only on age.
 Aging is automatic, so that if a one-year-old survives the year it becomes a two-year-old.
 
-Let's start with an example.
-[DESCRIBE EXAMPLE]
+The example we will use in this section comes from @Strijbosch1988, who quantified the age-specific demography of the viviparous lizard (*Zootoca vivipara*) in an intensive 7-year study on a 1.2 ha plot at the forest reserve "de Hamert" in the Netherlands.
+The age-specific female birth and survival rates are shown in the following table:
+
+```{r lizard-lt, echo=FALSE}
+px <- c(0.424, 308/424, 158/308, 57/158, 10/57, 0.7, 2/7) # Survival 
+bx <- c(0.08, 2.94, 4.13, 4.88, 6.5, 6.5, 6.5)/2          # Births
+lizard <- data.frame(x = 0:7, px = c(round(px, 3), 0), bx = c(0, bx))
+knitr::kable(
+  lizard,
+  caption = "Age-specific survival and birth rates for the lizard _Zootoca vivipara_ (formerly _Lacerta vivipara_) in the Netherlands [@Strijbosch1988]. Age-specific annual survival is calculated from the female cumulative survival values ($l_x$) in their Table 6. Age-specific birth rates are calculated by dividing the birth rates in their Table 6 ($m_x$) by two, as these appear to represent all offspring, and the primary sex ratio (estimated from two-year-old individuals) did not differ from 1 (pp. 21-22).",
+  col.names = c("Age in years ($x$)", "Female annual survival ($P_x$)", "Female offspring per female ($m_x$)") 
+)
+```
 
 
 # References
