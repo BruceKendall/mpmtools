@@ -39,6 +39,9 @@ library(mpmtools)
 
 A few general comments:
 
+- I assume that you have already synthesized your raw data into age/stage/size-specific birth, survival, and growth/maturation rates. 
+There are many ways to collect and analyze such data, and **mpmtools** does not currently have a direct interface with any of them.
+This might change in the future, but I make no promises!
 - I will refer to the model timestep as a "year," as that is the most common value in published models and is easier to parse than "timestep." 
 If you have a different timestep (e.g., day, week, month, decade) substitute that where you see year, yearly, annual, etc.
 - At present, the package only supports so-called "birth-pulse" models, in which "newborn" offspring (seeds, eggs, neonates, etc.) are produced over a very short (relative to the model timestep) period. 
