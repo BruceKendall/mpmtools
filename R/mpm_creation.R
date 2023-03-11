@@ -83,7 +83,6 @@ make_Leslie_matrix <- function(x, sx = NULL, mx = NULL, model = c("pre", "post")
 #' @return A matrix representing the Lefkovitch MPM.
 #' @export
 #'
-#' @examples
 make_Lefkovitch_matrix <- function(stage_table, survival = stage_table$survival,
                                    maternity = stage_table$maternity,
                                    maturation = stage_table$maturation,
