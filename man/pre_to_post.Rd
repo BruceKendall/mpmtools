@@ -53,3 +53,10 @@ non-spatial, one-sex or asexual models of animals (or plants without a seedbank)
 }
 }
 
+\examples{
+# Prebreeding census matrix of semipalmated sandpiper (from Morris & Doak)
+A_sandpiper <- matrix(c(0.0268, 0.0940, 0.1074,
+                        0.563,  0,      0,
+                        0,      0.563,  0.563))
+pre_to_post(0.129, A_sandpiper)
+}
