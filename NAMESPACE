@@ -2,7 +2,6 @@
 
 S3method(print,mpm)
 export(Amat)
-export(SeasonalDemography)
 export(collapse_stage.vector)
 export(lambda1)
 export(make_Lefkovitch_matrix)
