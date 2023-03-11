@@ -43,7 +43,8 @@
 #' # Prebreeding census matrix of semipalmated sandpiper (from Morris & Doak)
 #' A_sandpiper <- matrix(c(0.0268, 0.0940, 0.1074,
 #'                         0.563,  0,      0,
-#'                         0,      0.563,  0.563))
+#'                         0,      0.563,  0.563),
+#'                         nrow = 3, byrow = TRUE)
 #' pre_to_post(0.129, A_sandpiper)
 pre_to_post <- function(S0, Amat = NULL, Fmat = NULL, Umat = NULL) {
   if (is.null(Fmat)) {
