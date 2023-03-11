@@ -115,7 +115,7 @@ the last stage should have a maturation rate of zero).}
 \item{\code{matrix_type = "general"}}{Creates a fully flexible structured model,
 in which surviving indviduals in a class might transition to any other class.
 Required elements of \code{demog_info} are: (1) \code{births} (class specific birth
-rates, expressed either as a vector \link{for a single newborn type} or an n x m
+rates, expressed either as a vector (for a single newborn type) or an n x m
 matrix, where n is the number of classes and m is the number of newborn
 classes); (a vector of class specific survival rates); and \code{transitions} (an
 n x n matrix of transition probabilities, contingent on survival; each column

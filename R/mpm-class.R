@@ -135,7 +135,7 @@ new_mpm <- function(demog = list(births = numeric(),
 #' \item{`matrix_type = "general"`}{Creates a fully flexible structured model,
 #' in which surviving indviduals in a class might transition to any other class.
 #' Required elements of `demog_info` are: (1) `births` (class specific birth
-#' rates, expressed either as a vector [for a single newborn type] or an n x m
+#' rates, expressed either as a vector (for a single newborn type) or an n x m
 #' matrix, where n is the number of classes and m is the number of newborn
 #' classes); (a vector of class specific survival rates); and `transitions` (an
 #' n x n matrix of transition probabilities, contingent on survival; each column
