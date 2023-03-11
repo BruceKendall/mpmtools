@@ -28,7 +28,7 @@ Tmat[6:7, 6] <- c(0.167, 0.75) / surv[6]
 
 # Create the data
 teasel <- list(
-  demog <- data.frame(
+  demog = data.frame(
     stage = stages,
     seed_production = seed_production,
     survival = surv
